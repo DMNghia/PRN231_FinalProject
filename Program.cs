@@ -10,24 +10,29 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddCors();
 builder.Services.AddSingleton<Prn231_FinalProjectContext>();
-
+builder.Services.AddRazorPages();
+builder.Services.AddHttpClient();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+	app.UseSwagger();
+	app.UseSwaggerUI();
 }
+
+app.UseStaticFiles();
 
 app.UseHttpsRedirection();
 
 app.UseCors(options => options.AllowAnyOrigin()
-    .AllowAnyHeader()
-    .AllowAnyMethod());
+	.AllowAnyHeader()
+	.AllowAnyMethod());
 
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapRazorPages();
 
 app.Run();
