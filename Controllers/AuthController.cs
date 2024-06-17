@@ -43,7 +43,7 @@ namespace FinalProject.Controllers
             }
             if (user.IsActive == false)
             {
-
+                SendActiveAccount(user.FullName, user.Email, user.Id);
                 return BadRequest(new BaseResponse<object>
                 {
                     code = ResponseCode.ERROR.GetHashCode(),
