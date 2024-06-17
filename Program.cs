@@ -53,6 +53,8 @@ builder.Services.AddHttpClient();
 
 // Define Singleton
 builder.Services.AddSingleton<Prn231_FinalProjectContext>();
+builder.Services.AddRazorPages();
+builder.Services.AddHttpClient();
 builder.Services.AddSingleton<JwtService>();
 builder.Services.AddSingleton<EmailService>();
 
@@ -61,16 +63,18 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+	app.UseSwagger();
+	app.UseSwaggerUI();
 }
+
+app.UseStaticFiles();
 
 app.UseHttpsRedirection();
 
 // Use cors
 app.UseCors(options => options.AllowAnyOrigin()
-    .AllowAnyHeader()
-    .AllowAnyMethod());
+	.AllowAnyHeader()
+	.AllowAnyMethod());
 
 app.UseAuthentication();
 
