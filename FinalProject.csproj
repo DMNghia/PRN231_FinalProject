@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="Pages\login.cshtml" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="MailKit" Version="4.6.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="6.0.30" />
@@ -144,7 +140,6 @@
     <None Include="wwwroot\forms\contact.php" />
     <None Include="wwwroot\forms\newsletter.php" />
     <None Include="wwwroot\forms\Readme.txt" />
-    <None Include="Pages\login.cshtml" />
   </ItemGroup>
 
 </Project>
