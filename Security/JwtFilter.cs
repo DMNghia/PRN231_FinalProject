@@ -12,7 +12,7 @@ namespace FinalProject.Security
     {
         private readonly JwtService jwtService;
         private readonly string[] WHITE_LIST_URL = new string[] { "/api/auth/signin", "/api/auth/signup" };
-        private readonly string[] FRONT_END_URL = new string[] { "/Login", "/Index" , "/sign-up", "/course"};
+        private readonly string[] FRONT_END_URL = new string[] { "/login", "/index" , "/sign-up", "/course"};
         private readonly string[] TEACHER_ROLE_URL = new string[] { "/api/teacher/addCourse" };
 
         public JwtFilter(JwtService jwtService)
