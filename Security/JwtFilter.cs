@@ -12,8 +12,8 @@ namespace FinalProject.Security
     {
         private readonly JwtService jwtService;
         private readonly string[] WHITE_LIST_URL = new string[] { "/api/auth/signin", "/api/auth/signup" };
-        private readonly string[] FRONT_END_URL = new string[] { "/Login", "/Index" };
-        private readonly string[] TEACHER_ROLE_URL = new string[] { };
+        private readonly string[] FRONT_END_URL = new string[] { "/Login", "/Index" , "/sign-up", "/course"};
+        private readonly string[] TEACHER_ROLE_URL = new string[] { "/api/teacher/addCourse" };
 
         public JwtFilter(JwtService jwtService)
         {
@@ -25,6 +25,7 @@ namespace FinalProject.Security
             try
             {
                 string path = context.HttpContext.Request.Path;
+                path = path.ToLower();
                 if (!WHITE_LIST_URL.Contains(path) && !FRONT_END_URL.Contains(path))
                 {
                     string jwtToken = GetTokenFromRequest(context.HttpContext.Request);
