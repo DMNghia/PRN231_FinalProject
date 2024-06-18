@@ -1,4 +1,4 @@
-﻿@page
+﻿@page "/dang-ky"
 @model FinalProject.Pages.Sign_upModel
 @{
     Layout = null;
@@ -11,7 +11,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
     <link rel="stylesheet" href="/assets/css/sign-up.css">
-    <title>Login</title>
+    <title>Đăng ký</title>
 </head>
 <style>
     body {
@@ -33,47 +33,59 @@
                 <div class="featured-image mb-3">
                     <img src="assets/img/1.png" class="img-fluid" style="width: 250px;">
                 </div>
-                <p class="text-white fs-2" style="font-family: 'Courier New', Courier, monospace; font-weight: 600;">Be Verified</p>
-                <small class="text-white text-wrap text-center" style="width: 17rem;font-family: 'Courier New', Courier, monospace;">Join experienced Designers on this platform.</small>
+                <p class="text-white fs-2" style="font-family: 'Courier New', Courier, monospace; font-weight: 600;">Xác thực</p>
+                <small class="text-white text-wrap text-center" style="width: 17rem;font-family: 'Courier New', Courier, monospace;">Nền tảng chia sẻ và học miễn phí.</small>
             </div>
             <!-------------------- ------ Right Box ---------------------------->
 
             <div class="col-md-6 right-box">
                 <div class="row align-items-center">
                     <div class="header-text mb-4">
-                        <h2>Create new Account</h2>
-                        <p>We are happy when you create new account!</p>
+                        <h2>Tạo tài khoản mới</h2>
+                        <p>Chúng tôi rất vui khi bạn gia nhập với chúng tôi!</p>
                     </div>
                     <div class="input-group mb-3">
-                        <input type="text" class="form-control form-control-lg bg-light fs-6" placeholder="Enter Your Name">
+                        <input type="text" class="form-control form-control-lg bg-light fs-6" placeholder="Nhập tên của bạn">
                     </div>
                     <div class="input-group mb-3">
-                        <input type="text" class="form-control form-control-lg bg-light fs-6" placeholder="Email address">
+                        <input type="email" required class="form-control form-control-lg bg-light fs-6" placeholder="Email">
                     </div>
                     <div class="input-group mb-1">
-                        <input type="password" class="form-control form-control-lg bg-light fs-6" placeholder="Password">
+                        <input type="password" required class="form-control form-control-lg bg-light fs-6" placeholder="Mật khẩu">
                     </div>
                     <div class="input-group mb-5 d-flex justify-content-between">
                         <div class="form-check">
-                            <input type="checkbox" class="form-check-input" id="formCheck">
-                            <label for="formCheck" class="form-check-label text-secondary"><small>Remember Me</small></label>
+                            <label class="form-check-label text-secondary"><span>Tôi là</span></label><br />
+                            <input type="radio" class="form-check-input" checked name="role" value="STUDENT" id="studentRole">
+                            <label for="studentRole" class="form-check-label text-secondary"><small>Học sinh</small></label><br />
+                            <input type="radio" class="form-check-input" name="role" value="TEACHER" id="teacherRole">
+                            <label for="teacherRole" class="form-check-label text-secondary"><small>Giáo viên</small></label>
                         </div>
-                        <!-- <div class="forgot">
-                            <small><a href="#">Forgot Password?</a></small>
-                        </div> -->
                     </div>
                     <div class="input-group mb-3">
-                        <button class="btn btn-lg btn-primary w-100 fs-6"> Sign Up</button>
+                        <button id="btnSignUp" class="btn btn-lg btn-primary w-100 fs-6"> Đăng ký</button>
                     </div>
                     <!-- <div class="input-group mb-3">
                         <button class="btn btn-lg btn-light w-100 fs-6"><img src="assets/img/google.png" style="width:20px" class="me-2"><small>Sign In with Google</small></button>
                     </div> -->
                     <div class="row">
-                        <small>Already have account ! <a href="Login">Login</a></small>
+                        <small>Tôi đã có tài khoản! <a href="dang-nhap">Đăng nhập</a></small>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    <script>
+        document.getElementById("btnSignUp").addEventListener('click', async () => {
+            console.log("click button");
+            await fetch("/sign-up?handler=Partial")
+                .then((response) => {
+                    return response.json();
+                })
+                .then((result) => {
+                    console.log(result);
+                })
+        });
+    </script>
 </body>
 </html>

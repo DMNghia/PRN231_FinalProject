@@ -12,7 +12,7 @@ namespace FinalProject.Security
     {
         private readonly JwtService jwtService;
         private readonly string[] WHITE_LIST_URL = new string[] { "/api/auth/signin", "/api/auth/signup" };
-        private readonly string[] FRONT_END_URL = new string[] { "/Login", "/Index" };
+        private readonly string[] FRONT_END_URL = new string[] { "/dang-nhap", "/trang-chu", "/dang-ky" };
         private readonly string[] TEACHER_ROLE_URL = new string[] { };
 
         public JwtFilter(JwtService jwtService)
@@ -25,6 +25,7 @@ namespace FinalProject.Security
             try
             {
                 string path = context.HttpContext.Request.Path;
+                path = path.ToLower();
                 if (!WHITE_LIST_URL.Contains(path) && !FRONT_END_URL.Contains(path))
                 {
                     string jwtToken = GetTokenFromRequest(context.HttpContext.Request);
@@ -34,7 +35,17 @@ namespace FinalProject.Security
                         context.Result = new JsonResult(new BaseResponse<object>
                         {
                             code = ResponseCode.ERROR.GetHashCode(),
-                            message = "That bai"
+                            message = "Thất bại"
+                        });
+                        return;
+                    }
+                    if (!jwtService.CheckTokenExpired(jwtToken))
+                    {
+                        context.HttpContext.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                        context.Result = new JsonResult(new BaseResponse<object>
+                        {
+                            code = ResponseCode.ERROR.GetHashCode(),
+                            message = "Vui lòng đăng nhập"
                         });
                         return;
                     }
@@ -44,7 +55,7 @@ namespace FinalProject.Security
                         context.Result = new JsonResult(new BaseResponse<object>
                         {
                             code = ResponseCode.ERROR.GetHashCode(),
-                            message = "That bai"
+                            message = "Thất bại"
                         });
                         return;
                     }
@@ -57,7 +68,7 @@ namespace FinalProject.Security
                 context.Result = new JsonResult(new BaseResponse<object>
                 {
                     code = ResponseCode.ERROR.GetHashCode(),
-                    message = "That bai"
+                    message = "Thất bại"
                 });
             }
         }

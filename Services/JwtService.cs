@@ -15,6 +15,12 @@ namespace FinalProject.Services
             _config = config;
         }
 
+        public bool CheckTokenExpired(string token)
+        {
+            var jwtToken = new JwtSecurityToken(token);
+            return (jwtToken == null) || (jwtToken.ValidFrom > DateTime.UtcNow) || (jwtToken.ValidTo < DateTime.UtcNow);
+        }
+
         public UserLoginPrinciple GetPrincipleFromToken(string token)
         {
             var claims = new JwtSecurityTokenHandler().ReadJwtToken(token).Claims;
