@@ -1,6 +1,7 @@
 using FinalProject.Models;
 using FinalProject.Security;
 using FinalProject.Services;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -19,9 +20,19 @@ builder.Services.AddControllers(options =>
 // Add jwt config
 builder.Services.AddAuthentication(options =>
 {
-    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = GoogleDefaults.AuthenticationScheme;
 })
+    .AddCookie(options =>
+    {
+        options.Cookie.IsEssential = true;
+    })
+    .AddGoogle(GoogleDefaults.AuthenticationScheme, options =>
+    {
+        options.ClientId = builder.Configuration.GetSection("GoogleKeys:ClientId").Value;
+        options.ClientSecret = builder.Configuration.GetSection("GoogleKeys:ClientSecret").Value;
+        options.ClaimActions.MapJsonKey("urn:google:picture", "picture", "url");
+    })
     .AddJwtBearer(options =>
     {
         options.TokenValidationParameters = new TokenValidationParameters
@@ -43,6 +54,7 @@ builder.Services.Configure<MailSettings>(mailsettings);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddSession();
 
 // Add cors config
 builder.Services.AddCors();
@@ -57,6 +69,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddHttpClient();
 builder.Services.AddSingleton<JwtService>();
 builder.Services.AddSingleton<EmailService>();
+builder.Services.AddSingleton<AuthService>();
 
 var app = builder.Build();
 
@@ -66,6 +79,8 @@ if (app.Environment.IsDevelopment())
 	app.UseSwagger();
 	app.UseSwaggerUI();
 }
+
+app.UseSession();
 
 app.UseStaticFiles();
 
