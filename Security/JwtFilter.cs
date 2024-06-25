@@ -13,8 +13,8 @@ namespace FinalProject.Security
         private readonly JwtService jwtService;
         private readonly ILogger<JwtFilter> logger;
 
-        private readonly string[] WHITE_LIST_URL = new string[] { "/api/auth/*" };
-        private readonly string[] FRONT_END_URL = new string[] { "/dang-nhap", "/", "/dang-ky", "/dang-nhap-voi-google", "/google-response", "/kich-hoat-tai-khoan" };
+        private readonly string[] WHITE_LIST_URL = new string[] { "/api/auth/*","/api/lesson/*" };
+        private readonly string[] FRONT_END_URL = new string[] { "/dang-nhap", "/", "/dang-ky", "/dang-nhap-voi-google", "/google-response", "/kich-hoat-tai-khoan","/khoa-hoc/*","/bai-hoc/*" };
         private readonly string[] TEACHER_ROLE_URL = new string[] { };
 
         public JwtFilter(JwtService jwtService, ILogger<JwtFilter> logger)
@@ -128,7 +128,7 @@ namespace FinalProject.Security
                 string lowerUrl = url.ToLower();
                 if (lowerUrl.EndsWith("/*"))
                 {
-                    if (path.StartsWith(lowerUrl.Substring(lowerUrl.Length - 2, lowerUrl.Length)))
+                    if (path.StartsWith(lowerUrl.Substring(0, lowerUrl.Length - 2)))
                     {
                         return true;
                     }
