@@ -13,7 +13,7 @@ namespace FinalProject.Security
         private readonly JwtService jwtService;
         private readonly ILogger<JwtFilter> logger;
 
-        private readonly string[] WHITE_LIST_URL = new string[] { "/api/auth/*","/api/lesson/*" };
+        private readonly string[] WHITE_LIST_URL = new string[] { "/api/auth/*","/api/lesson/*","/api/mooc/*" };
         private readonly string[] FRONT_END_URL = new string[] { "/dang-nhap", "/", "/dang-ky", "/dang-nhap-voi-google", "/google-response", "/kich-hoat-tai-khoan","/khoa-hoc/*","/bai-hoc/*" };
         private readonly string[] TEACHER_ROLE_URL = new string[] { };
 

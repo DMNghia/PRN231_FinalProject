@@ -6,9 +6,9 @@ namespace FinalProject.Pages
 {
     public class Course_DetailModel : PageModel
     {
-        public void OnGet()
+        public void OnGet(string? href)
         {
-			
+            string url = href;
 		}
     }
 }

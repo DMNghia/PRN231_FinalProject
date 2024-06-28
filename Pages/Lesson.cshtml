@@ -1,15 +1,23 @@
-﻿@page "/bai-hoc/{href}"
+﻿@page "/khoa-hoc/{hrefKhoaHoc}/{hrefBaiHoc}"
 @using FinalProject.Dto;
+@using FinalProject.Constants
 @model FinalProject.Pages.LessonModel
 @{
     Layout = null;
     var lesson = ViewData["lesson"] as LessonDTO;
     var lessons = ViewData["lessons"] as List<LessonDTO>;
+    var hrefKhoaHoc = ViewData["hrefKhoaHoc"] as string;
+    //bool isTeacher = false;
+    //UserLoginPrinciple? principle = HttpContext.Items["principle"] as UserLoginPrinciple;
+    //if (principle != null && principle.Role == RoleName.TEACHER.ToString())
+    //{
+    //    isTeacher = true;
+    //}
 
 }
 <!DOCTYPE html>
 <html lang="en">
-
+    
 <head>
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
@@ -43,238 +51,460 @@
     * Author: BootstrapMade.com
     * License: https://bootstrapmade.com/license/
     ======================================================== -->
+    <style>
+        #popup, #popup1 {
+            position: fixed;
+            top: 30%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            height: fit-content;
+            padding: 50px;
+            box-shadow: 0 5px 30px rgba(0, 0, 0, .30);
+            background: #ffffff;
+            visibility: hidden;
+            opacity: 0.5;
+            transition: 0.5s;
+            z-index: 9999;
+            border-radius: 10px;
+        }
+
+            #popup.active, #popup1.active {
+                top: 50%;
+                visibility: visible;
+                opacity: 1;
+                transform: 0.5s;
+            }
+
+        #blur.active {
+            filter: blur(20px);
+            pointer-events: none;
+            user-select: none;
+        }
+
+        .wave-group {
+            position: relative;
+        }
+
+            .wave-group .input {
+                font-size: 16px;
+                padding: 10px 10px 10px 5px;
+                display: block;
+                width: 200px;
+                border: none;
+                border-bottom: 1px solid #515151;
+                background: transparent;
+            }
+
+                .wave-group .input:focus {
+                    outline: none;
+                }
+
+            .wave-group .label {
+                color: #999;
+                font-size: 18px;
+                font-weight: normal;
+                position: absolute;
+                pointer-events: none;
+                left: 5px;
+                top: 10px;
+                display: flex;
+            }
+
+            .wave-group .label-char {
+                transition: 0.2s ease all;
+                transition-delay: calc(var(--index) * .05s);
+            }
+
+            .wave-group .input:focus ~ label .label-char,
+            .wave-group .input:valid ~ label .label-char {
+                transform: translateY(-20px);
+                font-size: 14px;
+                color: #5264AE;
+            }
+
+            .wave-group .bar {
+                position: relative;
+                display: block;
+                width: 200px;
+            }
+
+                .wave-group .bar:before, .wave-group .bar:after {
+                    content: '';
+                    height: 2px;
+                    width: 0;
+                    bottom: 1px;
+                    position: absolute;
+                    background: #5264AE;
+                    transition: 0.2s ease all;
+                    -moz-transition: 0.2s ease all;
+                    -webkit-transition: 0.2s ease all;
+                }
+
+                .wave-group .bar:before {
+                    left: 50%;
+                }
+
+                .wave-group .bar:after {
+                    right: 50%;
+                }
+
+            .wave-group .input:focus ~ .bar:before,
+            .wave-group .input:focus ~ .bar:after {
+                width: 50%;
+            }
+    </style>
 </head>
 
 <body class="course-details-page">
-
-    <header id="header" class="header d-flex align-items-center sticky-top">
-        <div class="container-fluid container-xl position-relative d-flex align-items-center">
-
-            <a href="index.html" class="logo d-flex align-items-center me-auto">
-                <!-- Uncomment the line below if you also wish to use an image logo -->
-                <!-- <img src="/assets/img/logo.png" alt=""> -->
-                <h1 class="sitename">Free Course</h1>
-            </a>
-
-            <nav id="navmenu" class="navmenu">
-                <ul>
-                    <li><a href="Index">Home<br></a></li>
-@*                    <li><a href="about.html">About</a></li>
-*@                    <li><a href="Course">Courses</a></li>
-                    @*<li><a href="trainers.html">Trainers</a></li>*@
-                    @*<li><a href="events.html">Events</a></li>*@
-                    @*<li><a href="pricing.html">Pricing</a></li>*@
-                    <li class="dropdown">
-                        <a href="#"><span>Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-                        <ul>
-                            <li><a href="#">Dropdown 1</a></li>
-                            <li class="dropdown">
-                                <a href="#"><span>Deep Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-                                <ul>
-                                    <li><a href="#">Deep Dropdown 1</a></li>
-                                    <li><a href="#">Deep Dropdown 2</a></li>
-                                    <li><a href="#">Deep Dropdown 3</a></li>
-                                    <li><a href="#">Deep Dropdown 4</a></li>
-                                    <li><a href="#">Deep Dropdown 5</a></li>
-                                </ul>
-                            </li>
-                            <li><a href="#">Dropdown 2</a></li>
-                            <li><a href="#">Dropdown 3</a></li>
-                            <li><a href="#">Dropdown 4</a></li>
-                        </ul>
-                    </li>
-                    <li><a href="contact.html">Contact</a></li>
-                </ul>
-                <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
-            </nav>
-
-            <a class="btn-getstarted" href="Login">Đăng nhập</a>
-
-        </div>
-    </header>
-
-    <main class="main">
-
-        <!-- Page Title -->
-        <div class="page-title" data-aos="fade">
-            <div class="heading">
-                <div class="container">
-                    <div class="row d-flex justify-content-center text-center">
-                        <div class="col-lg-8">
-                            <h1>Chi tiết bài học</h1>
-                            <p class="mb-0">@lesson.Description</p>
-                        </div>
+    @*<h1>@principle.FullName</h1>*@
+    <div id="popup">
+        <form action="" method="post" id="addLesson">
+            
+                    <div class="wave-group">
+                        <input type="text" class="input" id="detailName" 
+                               style="margin-top: 20px;width: 80%" readonly>
+                        <span class="bar"></span>
+                        <label class="label">
+                            <span class="label-char" style="--index: 0">L</span>
+                            <span class="label-char" style="--index: 1">e</span>
+                            <span class="label-char" style="--index: 2">s</span>
+                            <span class="label-char" style="--index: 3">s</span>
+                            <span class="label-char" style="--index: 4">o</span>
+                            <span class="label-char" style="--index: 5">n</span>
+                            <span class="label-char" style="--index: 6">N</span>
+                            <span class="label-char" style="--index: 7">a</span>
+                            <span class="label-char" style="--index: 8">m</span>
+                            <span class="label-char" style="--index: 8">e</span>
+                        </label>
                     </div>
-                </div>
-            </div>
-            <nav class="breadcrumbs">
-                <div class="container">
-                    <ol>
-                        <li><a href="Index">Trang Chủ</a></li>
-                        <li class="current">Chi tiết bài học</li>
-                    </ol>
-                </div>
-            </nav>
-        </div><!-- End Page Title -->
-        <!-- Courses Course Details Section -->
-        <section id="courses-course-details" class="courses-course-details section">
+              
+            <div class="wave-group" style="margin-top: 10px;">
+                <label class="label">
+                    <span class="label-char" style="--index: 0; padding-top:20px">Description</span>
+                </label><br>
+                <textarea rows="10" cols="25" style="width: 80%;font-size: 16px;"
+                          placeholder="Add Description">
 
-            <div class="container" data-aos="fade-up">
-
-                <div class="row">
-                    <div class="col-lg-8">
-                        <iframe width="800" height="500"    src="@lesson.VideoUrl" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                        <h3>@(lesson != null ? lesson.Name : "Loading...")</h3>
-                        <p>
-                            @(lesson != null ? lesson.VideoTranscript : "Loading...")
-                        </p>
-                    </div>
-                    <div class="col-lg-4">
-
-                        <div class="course-info d-flex justify-content-between align-items-center">
-                            <h5>Trainer</h5>
-                            <p><a href="#">Walter White</a></p>
-                        </div>
-
-                        <div class="course-info d-flex justify-content-between align-items-center">
-                            <h5>Course Fee</h5>
-                            <p>$165</p>
-                        </div>
-
-                        <div class="course-info d-flex justify-content-between align-items-center">
-                            <h5>Available Seats</h5>
-                            <p>30</p>
-                        </div>
-
-                        <div class="course-info d-flex justify-content-between align-items-center">
-                            <h5>Schedule</h5>
-                            <p>5.00 pm - 7.00 pm</p>
-                        </div>
-
-                    </div>
-                </div>
+            </textarea>
 
             </div>
+            <div class="wave-group">
+                <input type="text" class="input" 
+                       style="margin-top: 20px;width: 80%" required>
+                <span class="bar"></span>
+                <label class="label">
+                    <span class="label-char" style="--index: 0">H</span>
+                    <span class="label-char" style="--index: 1">r</span>
+                    <span class="label-char" style="--index: 2">e</span>
+                    <span class="label-char" style="--index: 3">f</span>
+                </label>
+            </div>
+            <div class="wave-group">
+                <input type="text" class="input"
+                       style="margin-top: 20px;width: 80%" required>
+                <span class="bar"></span>
+                <label class="label">
+                    <span class="label-char" style="--index: 0">Video URL</span>
+                    
+                </label>
+            </div>
+            <div class="wave-group">
+                <input type="text" class="input"
+                       style="margin-top: 20px;width: 80%" required>
+                <span class="bar"></span>
+                <label class="label">
+                    <span class="label-char" style="--index: 0">Video Transcript</span>
 
-        </section><!-- /Courses Course Details Section -->
-        <!-- Tabs Section -->
-        <section id="tabs" class="tabs section">
-
-            <div class="container" data-aos="fade-up" data-aos-delay="100">
-
-                <div class="row">
-                    <div class="col-lg-3">
-                        <ul class="nav nav-tabs flex-column">
-                            @if (lessons != null)
-                            {
-                                foreach (var item in lessons)
-                                {
-                                    <li class="nav-item">
-                                        <a class="nav-link @(item.Href == lesson?.Href ? "active show" : "")" href="/bai-hoc/@item.Href">@item.Name</a>
-                                    </li>
-                                }
-                            }
-                        </ul>
-                    </div>
-                    <div class="col-lg-9 mt-4 mt-lg-0">
-                        <div class="tab-content">
-                            <div class="tab-pane active show" id="tab-1">
-                                <div class="row">
-                                    <div class="col-lg-8 details order-2 order-lg-1">
-                                        @if (lesson != null)
-                                        {
-                                             <h3>Tên bài: @lesson.Name</h3>
-                                        <p> Mô tả: @lesson.Description</p>
-                                        <p>Ngày tạo: @lesson.CreateAt.Value.ToString("dd/MM/yyyy")</p>
-                                        }
-
-                                    </div>
-                                    <div class="col-lg-4 text-center order-1 order-lg-2">
-                                        <img src="/assets/img/tabs/tab-1.png" alt="" class="img-fluid">
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                </label>
+            </div>
+            <div class="" style="margin-top: 20px;">
+                
+                    <button type="submit" name="submitLesson" value="submitLesson"
+                            style="padding: 10px;cursor: pointer;border-radius: 7px;border: 1px solid #5c636a;margin-right: 20px;">
+                        Đăng Bài học mới
+                    </button>
                 
 
-        </section><!-- /Tabs Section -->
-
-    </main>
-
-    <footer id="footer" class="footer position-relative">
-
-        <div class="container footer-top">
-            <div class="row gy-4">
-                <div class="col-lg-4 col-md-6 footer-about">
-                    <a href="index.html" class="logo d-flex align-items-center">
-                        <span class="sitename">Mentor</span>
-                    </a>
-                    <div class="footer-contact pt-3">
-                        <p>A108 Adam Street</p>
-                        <p>New York, NY 535022</p>
-                        <p class="mt-3"><strong>Phone:</strong> <span>+1 5589 55488 55</span></p>
-                        <p><strong>Email:</strong> <span>info@example.com</span></p>
-                    </div>
-                    <div class="social-links d-flex mt-4">
-                        <a href=""><i class="bi bi-twitter-x"></i></a>
-                        <a href=""><i class="bi bi-facebook"></i></a>
-                        <a href=""><i class="bi bi-instagram"></i></a>
-                        <a href=""><i class="bi bi-linkedin"></i></a>
-                    </div>
+                <button type="button" onclick="toggle()"
+                        style="padding: 10px;cursor: pointer;border-radius: 7px;border: 1px solid #5c636a">
+                    Đóng
+                </button>
+            </div>
+          
+        </form>
+    </div>
+    <div id="popup1">
+        <form method="post" >
+           
+              
+                
+                <div class="wave-group">
+                    <input type="text" class="input" id="detailName"  style="margin-top: 20px; width: 80%" readonly>
+                    <span class="bar"></span>
+                    <label class="label">
+                        <span class="label-char" style="--index: 0">N</span>
+                        <span class="label-char" style="--index: 1">a</span>
+                        <span class="label-char" style="--index: 2">m</span>
+                        <span class="label-char" style="--index: 3">e</span>
+                    </label>
                 </div>
+            
+            <input type="hidden" name="movieId"  />
+            <div class="wave-group" style="margin-top: 20px;">
+                <label>Dán link ở đây:</label><br>
+                <textarea rows="10" cols="25"  style="width: 80%; font-size: 16px;" placeholder="Paste here..." required></textarea>
+            </div>
+            <div style="margin-top: 20px;">
+                
+                    <button type="submit" style="padding: 10px; cursor: pointer; border-radius: 7px; border: 1px solid #5c636a; margin-right: 20px;">Tạo mooc</button>
+                
 
-                <div class="col-lg-2 col-md-3 footer-links">
-                    <h4>Useful Links</h4>
+                <button type="button" onclick="toggle1()" style="padding: 10px; cursor: pointer; border-radius: 7px; border: 1px solid #5c636a;">Đóng</button>
+            </div>
+            
+        </form>
+    </div>
+    <div id="blur">
+        <header id="header" class="header d-flex align-items-center sticky-top">
+            <div class="container-fluid container-xl position-relative d-flex align-items-center">
+
+                <a href="index.html" class="logo d-flex align-items-center me-auto">
+                    <!-- Uncomment the line below if you also wish to use an image logo -->
+                    <!-- <img src="/assets/img/logo.png" alt=""> -->
+                    <h1 class="sitename">Free Course</h1>
+                </a>
+
+                <nav id="navmenu" class="navmenu">
                     <ul>
-                        <li><a href="#">Home</a></li>
-                        <li><a href="#">About us</a></li>
-                        <li><a href="#">Services</a></li>
-                        <li><a href="#">Terms of service</a></li>
-                        <li><a href="#">Privacy policy</a></li>
+                        <li><a href="Index">Home<br></a></li>
+                        @*                    <li><a href="about.html">About</a></li>
+                        *@
+                        <li><a href="Course">Courses</a></li>
+                        @*<li><a href="trainers.html">Trainers</a></li>*@
+                        @*<li><a href="events.html">Events</a></li>*@
+                        @*<li><a href="pricing.html">Pricing</a></li>*@
+                        <li class="dropdown">
+                            <a href="#"><span>Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                            <ul>
+                                <li><a href="#">Dropdown 1</a></li>
+                                <li class="dropdown">
+                                    <a href="#"><span>Deep Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                                    <ul>
+                                        <li><a href="#">Deep Dropdown 1</a></li>
+                                        <li><a href="#">Deep Dropdown 2</a></li>
+                                        <li><a href="#">Deep Dropdown 3</a></li>
+                                        <li><a href="#">Deep Dropdown 4</a></li>
+                                        <li><a href="#">Deep Dropdown 5</a></li>
+                                    </ul>
+                                </li>
+                                <li><a href="#">Dropdown 2</a></li>
+                                <li><a href="#">Dropdown 3</a></li>
+                                <li><a href="#">Dropdown 4</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="contact.html">Contact</a></li>
                     </ul>
-                </div>
+                    <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+                </nav>
 
-                <div class="col-lg-2 col-md-3 footer-links">
-                    <h4>Our Services</h4>
-                    <ul>
-                        <li><a href="#">Web Design</a></li>
-                        <li><a href="#">Web Development</a></li>
-                        <li><a href="#">Product Management</a></li>
-                        <li><a href="#">Marketing</a></li>
-                        <li><a href="#">Graphic Design</a></li>
-                    </ul>
-                </div>
-
-                <div class="col-lg-4 col-md-12 footer-newsletter">
-                    <h4>Our Newsletter</h4>
-                    <p>Subscribe to our newsletter and receive the latest news about our products and services!</p>
-                    <form action="forms/newsletter.php" method="post" class="php-email-form">
-                        <div class="newsletter-form"><input type="email" name="email"><input type="submit" value="Subscribe"></div>
-                        <div class="loading">Loading</div>
-                        <div class="error-message"></div>
-                        <div class="sent-message">Your subscription request has been sent. Thank you!</div>
-                    </form>
-                </div>
+                <a class="btn-getstarted" asp-page="/Login">Đăng nhập</a>
 
             </div>
-        </div>
+        </header>
 
-        <div class="container copyright text-center mt-4">
-            <p>© <span>Copyright</span> <strong class="px-1 sitename">Mentor</strong> <span>All Rights Reserved</span></p>
-            <div class="credits">
-                <!-- All the links in the footer should remain intact. -->
-                <!-- You can delete the links only if you've purchased the pro version. -->
-                <!-- Licensing information: https://bootstrapmade.com/license/ -->
-                <!-- Purchase the pro version with working PHP/AJAX contact form: [buy-url] -->
-                Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+        <main class="main">
+
+            <!-- Page Title -->
+            <div class="page-title" data-aos="fade">
+                <div class="heading">
+                    <div class="container">
+                        <div class="row d-flex justify-content-center text-center">
+                            <div class="col-lg-8">
+                                <h1>Chi tiết bài học</h1>
+                                <p class="mb-0">@lesson.Description</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <nav class="breadcrumbs">
+                    <div class="container">
+                        <ol>
+                            <li><a href="Index">Trang Chủ</a></li>
+                            <li class="current">Chi tiết bài học</li>
+                        </ol>
+                    </div>
+                </nav>
+            </div><!-- End Page Title -->
+            <!-- Courses Course Details Section -->
+            <section id="courses-course-details" class="courses-course-details section">
+
+                <div class="container" data-aos="fade-up">
+
+                    <div class="row">
+                        <div class="col-lg-8">
+                            <iframe width="800" height="500" src="@lesson.VideoUrl" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                            <h3>@(lesson != null ? lesson.Name : "Loading...")</h3>
+                            <p>
+                                @(lesson != null ? lesson.VideoTranscript : "Loading...")
+                            </p>
+                        </div>
+                        <div class="col-lg-4">
+
+                            <div class="course-info d-flex justify-content-between align-items-center">
+                                <button class="btn btn-success pull-right justify-content-center btn-create-lesson"
+                                        type="button"
+                                        data-toggle="modal" data-target="#lessonModal" onclick="toggle1()">
+                                    <span class="icon"> <i class="fas fa-pencil-alt"></i> </span> <span>Thêm Mooc</span>
+                                </button>
+                            </div>
+
+                            
+                                <div class="course-info d-flex justify-content-between align-items-center">
+                                    <button class="btn btn-success pull-right justify-content-center btn-create-lesson"
+                                            type="button"
+                                            data-toggle="modal" data-target="#lessonModal" onclick="toggle()">
+                                        <span class="icon"> <i class="fas fa-pencil-alt"></i> </span> <span>Thêm bài học</span>
+                                    </button>
+                                </div>
+                            
+
+                            <div class="course-info d-flex justify-content-between align-items-center">
+                                <h5>Available Seats</h5>
+                                <p>30</p>
+                            </div>
+
+                            <div class="course-info d-flex justify-content-between align-items-center">
+                                <h5>Schedule</h5>
+                                <p>5.00 pm - 7.00 pm</p>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </section><!-- /Courses Course Details Section -->
+            <!-- Tabs Section -->
+            <section id="tabs" class="tabs section">
+
+                <div class="container" data-aos="fade-up" data-aos-delay="100">
+
+                    <div class="row">
+                        <div class="col-lg-3">
+                            <ul class="nav nav-tabs flex-column">
+                                @if (lessons != null)
+                                {
+                                    foreach (var item in lessons)
+                                    {
+                                        <li class="nav-item">
+                                            <a class="nav-link @(item.Href == lesson?.Href ? "active show" : "")" href="/khoa-hoc/@hrefKhoaHoc/@item.Href">@item.Name</a>
+                                        </li>
+                                    }
+                                }
+                            </ul>
+                        </div>
+                        <div class="col-lg-9 mt-4 mt-lg-0">
+                            <div class="tab-content">
+                                <div class="tab-pane active show" id="tab-1">
+                                    <div class="row">
+                                        <div class="col-lg-8 details order-2 order-lg-1">
+                                            @if (lesson != null)
+                                            {
+                                                <h3>Tên bài: @lesson.Name</h3>
+                                                <p> Mô tả: @lesson.Description</p>
+                                                <p>Ngày tạo: @lesson.CreateAt.Value.ToString("dd/MM/yyyy")</p>
+                                            }
+
+                                        </div>
+                                        <div class="col-lg-4 text-center order-1 order-lg-2">
+                                            <img src="/assets/img/tabs/tab-1.png" alt="" class="img-fluid">
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </section><!-- /Tabs Section -->
+
+        </main>
+
+        <footer id="footer" class="footer position-relative">
+
+            <div class="container footer-top">
+                <div class="row gy-4">
+                    <div class="col-lg-4 col-md-6 footer-about">
+                        <a href="index.html" class="logo d-flex align-items-center">
+                            <span class="sitename">Mentor</span>
+                        </a>
+                        <div class="footer-contact pt-3">
+                            <p>A108 Adam Street</p>
+                            <p>New York, NY 535022</p>
+                            <p class="mt-3"><strong>Phone:</strong> <span>+1 5589 55488 55</span></p>
+                            <p><strong>Email:</strong> <span>info@example.com</span></p>
+                        </div>
+                        <div class="social-links d-flex mt-4">
+                            <a href=""><i class="bi bi-twitter-x"></i></a>
+                            <a href=""><i class="bi bi-facebook"></i></a>
+                            <a href=""><i class="bi bi-instagram"></i></a>
+                            <a href=""><i class="bi bi-linkedin"></i></a>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-2 col-md-3 footer-links">
+                        <h4>Useful Links</h4>
+                        <ul>
+                            <li><a href="#">Home</a></li>
+                            <li><a href="#">About us</a></li>
+                            <li><a href="#">Services</a></li>
+                            <li><a href="#">Terms of service</a></li>
+                            <li><a href="#">Privacy policy</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="col-lg-2 col-md-3 footer-links">
+                        <h4>Our Services</h4>
+                        <ul>
+                            <li><a href="#">Web Design</a></li>
+                            <li><a href="#">Web Development</a></li>
+                            <li><a href="#">Product Management</a></li>
+                            <li><a href="#">Marketing</a></li>
+                            <li><a href="#">Graphic Design</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="col-lg-4 col-md-12 footer-newsletter">
+                        <h4>Our Newsletter</h4>
+                        <p>Subscribe to our newsletter and receive the latest news about our products and services!</p>
+                        <form action="forms/newsletter.php" method="post" class="php-email-form">
+                            <div class="newsletter-form"><input type="email" name="email"><input type="submit" value="Subscribe"></div>
+                            <div class="loading">Loading</div>
+                            <div class="error-message"></div>
+                            <div class="sent-message">Your subscription request has been sent. Thank you!</div>
+                        </form>
+                    </div>
+
+                </div>
             </div>
-        </div>
 
-    </footer>
+            <div class="container copyright text-center mt-4">
+                <p>© <span>Copyright</span> <strong class="px-1 sitename">Mentor</strong> <span>All Rights Reserved</span></p>
+                <div class="credits">
+                    <!-- All the links in the footer should remain intact. -->
+                    <!-- You can delete the links only if you've purchased the pro version. -->
+                    <!-- Licensing information: https://bootstrapmade.com/license/ -->
+                    <!-- Purchase the pro version with working PHP/AJAX contact form: [buy-url] -->
+                    Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+                </div>
+            </div>
+
+        </footer>
+    </div>
+   
 
     <!-- Scroll Top -->
     <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
@@ -292,6 +522,32 @@
 
     <!-- Main JS File -->
     <script src="/assets/js/main.js"></script>
+    <script>
+        function toggle1() {
+            var blur = document.getElementById('blur');
+            blur.classList.toggle('active');
+            var popup = document.getElementById('popup1');
+            popup.classList.toggle('active');
+        }
+
+        function alertDelete(id) {
+            document.getElementById("deleteId").value = id;
+        }
+
+        function toggleDelete() {
+            var blur = document.getElementById('blur');
+            blur.classList.toggle('active');
+            var deleteDiv = document.getElementById('deleteDiv');
+            deleteDiv.classList.toggle('active');
+        }
+
+        function toggle() {
+            var blur = document.getElementById('blur');
+            blur.classList.toggle('active');
+            var popup = document.getElementById('popup');
+            popup.classList.toggle('active');
+        }
+    </script>
 
 </body>
 
