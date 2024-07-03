@@ -8,6 +8,7 @@ using FinalProject.Constants;
 using FinalProject.Models;
 using Microsoft.EntityFrameworkCore;
 using FinalProject.Dto.Response;
+using System.Text.Json;
 
 namespace FinalProject.Controllers
 {
@@ -26,6 +27,16 @@ namespace FinalProject.Controllers
             this.logger = logger;
             _context = context;
             this.emailService = emailService;
+        }
+
+        [HttpGet("get-login")]
+        public IActionResult GetLogin()
+        {
+            return Ok(new BaseResponse<object>
+            {
+                code = ResponseCode.SUCCESS.GetHashCode(),
+                message = "Thành công"
+            });
         }
 
         [HttpPost("active-account/{tokenValue}")]
@@ -92,7 +103,7 @@ namespace FinalProject.Controllers
             User? user = await _context.Users.FirstOrDefaultAsync(user => user.Email == request.Email && user.TypeAuthentication == TypeAuthentication.LOCAL.ToString());
             if (user == null || !BCrypt.Net.BCrypt.EnhancedVerify(request.Password, user?.Password))
             {
-                return BadRequest(new BaseResponse<object>
+                return BadRequest(new BaseResponse<SignInResponse>
                 {
                     code = ResponseCode.ERROR.GetHashCode(),
                     message = "Tên đăng nhập hoặc mật khẩu không chính xác"
@@ -101,22 +112,23 @@ namespace FinalProject.Controllers
             if (user.IsActive == false)
             {
                 SendActiveAccount(user.FullName, user.Email, user.Id);
-                return BadRequest(new BaseResponse<object>
+                return BadRequest(new BaseResponse<SignInResponse>
                 {
                     code = ResponseCode.ERROR.GetHashCode(),
                     message = "Tài khoản chưa được kích hoạt chúng tôi đã gửi lại mã kích hoạt tài khoản vui lòng vào mail để kích hoạt tài khoản"
                 });
             }
             logger.LogInformation($"USER WITH EMAIL: {request.Email} >>> SIGN IN SUCCESS");
-            string tokenValue = jwtService.GenerateJSONWebToken(new UserLoginPrinciple
+            UserLoginPrinciple principle = new UserLoginPrinciple
             {
+                Id = user.Id,
                 Email = user.Email,
                 FullName = user.FullName,
                 IsActive = user.IsActive ?? false,
                 Role = user.Role,
                 TypeAuthentication = user.TypeAuthentication
-            });
-            HttpContext.Session.SetString("token", tokenValue);
+            };
+            string tokenValue = jwtService.GenerateJSONWebToken(principle);
             return Ok(new BaseResponse<SignInResponse>
             {
                 code = ResponseCode.SUCCESS.GetHashCode(),
@@ -163,7 +175,8 @@ namespace FinalProject.Controllers
                     code = ResponseCode.SUCCESS.GetHashCode(),
                     message = "Đăng ký thành công vui vui lòng vào mail của bạn để kích hoạt tài khoản"
                 });
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 logger.LogError($"SIGN UP WITH EMAIL: {request.Email} >>> ERROR: {ex}");
                 return Ok(new BaseResponse<object>

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Security.Claims;
 using FinalProject.Services;
+using FinalProject.Dto.Response;
 
 namespace FinalProject.Pages
 {
@@ -29,7 +30,8 @@ namespace FinalProject.Pages
                 });
             string email = Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Email).Value;
             string name = Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Name).Value;
-            authService.LoginWithGoogle(email, name, HttpContext);
+            BaseResponse<SignInResponse> response = await authService.LoginWithGoogle(email, name, HttpContext);
+            AuthService.SetPrinciple(HttpContext, JwtService.GetPrincipleFromToken(response.data.Token));
             return RedirectToPage("/Index");
         }
     }
