@@ -1,9 +1,9 @@
-﻿@page "/dang-nhap"
+@page "/dang-nhap"
 @model FinalProject.Pages.LoginModel
 @{
-    Layout = null;
-    var errorMessage = ViewData["errorMessage"] as string;
-    var successMessage = ViewData["successMessage"] as string;
+Layout = null;
+var errorMessage = ViewData["errorMessage"] as string;
+var successMessage = ViewData["successMessage"] as string;
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -29,66 +29,66 @@
     }
 </style>
 <body>
-    <div id="notification-area"></div>
-    <!----------------------- Main Container -------------------------->
-    <div class="container d-flex justify-content-center align-items-center min-vh-100">
-        <!----------------------- Login Container -------------------------->
-        <div class="row border rounded-5 p-3 bg-white shadow box-area">
-            <!--------------------------- Left Box ----------------------------->
-            <div class="col-md-6 rounded-4 d-flex justify-content-center align-items-center flex-column left-box" style="background: #5fcf80;">
-                <div class="featured-image mb-3">
-                    <img src="./assets/img/1.png" class="img-fluid" style="width: 250px;">
-                </div>
-                <p class="text-white fs-2" style="font-family: 'Courier New', Courier, monospace; font-weight: 600;">Xác thực</p>
-                <small class="text-white text-wrap text-center" style="width: 17rem;font-family: 'Courier New', Courier, monospace;">Nền tảng chia sẻ và học miễn phí.</small>
+<div id="notification-area"></div>
+<!----------------------- Main Container -------------------------->
+<div class="container d-flex justify-content-center align-items-center min-vh-100">
+    <!----------------------- Login Container -------------------------->
+    <div class="row border rounded-5 p-3 bg-white shadow box-area">
+        <!--------------------------- Left Box ----------------------------->
+        <div class="col-md-6 rounded-4 d-flex justify-content-center align-items-center flex-column left-box" style="background: #5fcf80;">
+            <div class="featured-image mb-3">
+                <img src="./assets/img/1.png" class="img-fluid" style="width: 250px;">
             </div>
-            <!-------------------- ------ Right Box ---------------------------->
+            <p class="text-white fs-2" style="font-family: 'Courier New', Courier, monospace; font-weight: 600;">Xác thực</p>
+            <small class="text-white text-wrap text-center" style="width: 17rem;font-family: 'Courier New', Courier, monospace;">Nền tảng chia sẻ và học miễn phí.</small>
+        </div>
+        <!-------------------- ------ Right Box ---------------------------->
 
-            <div class="col-md-6 right-box">
-                <div class="row align-items-center">
-                    <div class="header-text mb-4">
-                        <h2>Chào mừng trở lại</h2>
-                        <p>Chúng tôi rất vui khi bạn quay lại</p>
-                    </div>
-                    <form method="post">
-                        <div class="input-group mb-3">
-                            <input asp-for="@Model.SignInRequest.Email" id="emailInput" type="email" required class="form-control form-control-lg bg-light fs-6" placeholder="Email">
-                        </div>
-                        <div class="input-group mb-1">
-                            <input asp-for="@Model.SignInRequest.Password" id="passwordInput" type="password" required class="form-control form-control-lg bg-light fs-6" placeholder="Mật khẩu">
-                        </div>
-                        <div class="input-group mb-5 d-flex justify-content-between">
-                        </div>
-                        <div class="input-group mb-3">
-                            <button id="btnLogin" type="submit" class="btn btn-lg btn-primary w-100 fs-6">Đăng nhập</button>
-                        </div>
-                    </form>
+        <div class="col-md-6 right-box">
+            <div class="row align-items-center">
+                <div class="header-text mb-4">
+                    <h2>Chào mừng trở lại</h2>
+                    <p>Chúng tôi rất vui khi bạn quay lại</p>
+                </div>
+                <form method="post">
                     <div class="input-group mb-3">
-                        <a href="dang-nhap-voi-google"><button type="button" class="btn btn-lg btn-light w-100 fs-6"><img src="./assets/img/google.png" style="width:20px" class="me-2"><small>Đăng nhập với Google</small></button></a>
+                        <input asp-for="@Model.SignInRequest.Email" id="emailInput" type="email" required class="form-control form-control-lg bg-light fs-6" placeholder="Email">
                     </div>
-                    <div class="row">
-                        <small>Tôi không có tài khoản? <a href="dang-ky">Đăng ký</a></small>
+                    <div class="input-group mb-1">
+                        <input asp-for="@Model.SignInRequest.Password" id="passwordInput" type="password" required class="form-control form-control-lg bg-light fs-6" placeholder="Mật khẩu">
                     </div>
+                    <div class="input-group mb-5 d-flex justify-content-between">
+                    </div>
+                    <div class="input-group mb-3">
+                        <button id="btnLogin" type="submit" class="btn btn-lg btn-primary w-100 fs-6">Đăng nhập</button>
+                    </div>
+                </form>
+                <div class="input-group mb-3">
+                    <a href="dang-nhap-voi-google"><button type="button" class="btn btn-lg btn-light w-100 fs-6"><img src="./assets/img/google.png" style="width:20px" class="me-2"><small>Đăng nhập với Google</small></button></a>
+                </div>
+                <div class="row">
+                    <small>Tôi không có tài khoản? <a href="dang-ky">Đăng ký</a></small>
                 </div>
             </div>
         </div>
     </div>
-    <script src="./assets/js/notification.js"></script>
-    @if (errorMessage != null)
-    {
-        <script>
-            window.onload = () => {
-                notify('danger', '@errorMessage');
-            };
-        </script>
-    }
-    @if (successMessage != null)
-    {
-        <script>
-            window.onload = () => {
-                notify('success', '@successMessage');
-            };
-        </script>
-    }
+</div>
+<script src="./assets/js/notification.js"></script>
+@if (errorMessage != null)
+{
+<script>
+    window.onload = () => {
+        notify('danger', '@errorMessage');
+    };
+</script>
+}
+@if (successMessage != null)
+{
+<script>
+    window.onload = () => {
+        notify('success', '@successMessage');
+    };
+</script>
+}
 </body>
 </html>
