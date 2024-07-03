@@ -21,11 +21,12 @@ namespace FinalProject.Services
             return (jwtToken == null) || (jwtToken.ValidFrom > DateTime.UtcNow) || (jwtToken.ValidTo < DateTime.UtcNow);
         }
 
-        public UserLoginPrinciple GetPrincipleFromToken(string token)
+        public static UserLoginPrinciple GetPrincipleFromToken(string token)
         {
             var claims = new JwtSecurityTokenHandler().ReadJwtToken(token).Claims;
             return new UserLoginPrinciple
             {
+                Id = int.Parse(claims.First(c => c.Type == "id").Value),
                 FullName = claims.First(c => c.Type == JwtRegisteredClaimNames.Sub).Value,
                 Email = claims.First(c => c.Type == JwtRegisteredClaimNames.Email).Value,
                 Role = claims.First(c => c.Type == "role").Value,
@@ -40,6 +41,7 @@ namespace FinalProject.Services
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
             var claims = new[] {
+                new Claim("id", principle.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.Sub, principle.FullName),
                 new Claim(JwtRegisteredClaimNames.Email, principle.Email),
                 new Claim("role", principle.Role),
@@ -50,7 +52,7 @@ namespace FinalProject.Services
             var token = new JwtSecurityToken(_config["Jwt:Issuer"],
               _config["Jwt:Issuer"],
               claims,
-              expires: DateTime.Now.AddMinutes(120),
+              expires: DateTime.Now.AddHours(24),
               signingCredentials: credentials);
 
             return new JwtSecurityTokenHandler().WriteToken(token);

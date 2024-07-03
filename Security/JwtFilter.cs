@@ -2,9 +2,13 @@
 using FinalProject.Dto;
 using FinalProject.Dto.Response;
 using FinalProject.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
+using System.Security.Principal;
+using System.Text.Json;
 
 namespace FinalProject.Security
 {
@@ -13,8 +17,8 @@ namespace FinalProject.Security
         private readonly JwtService jwtService;
         private readonly ILogger<JwtFilter> logger;
 
-        private readonly string[] WHITE_LIST_URL = new string[] { "/api/auth/*" };
-        private readonly string[] FRONT_END_URL = new string[] { "/dang-nhap", "/", "/dang-ky", "/dang-nhap-voi-google", "/google-response", "/kich-hoat-tai-khoan" };
+        private readonly string[] WHITE_LIST_URL = new string[] { "/api/auth/sign-in", "/api/auth/sign-up", "/api/auth/active-account/*" };
+        private readonly string[] FRONT_END_URL = new string[] { "/dang-nhap", "/", "/dang-ky", "/dang-nhap-voi-google", "/google-response", "/kich-hoat-tai-khoan", "/Pricing", "/About", "/Course", "/Course-Detail", "/Event", "/Starter-Page", "/Trainers", "/Contact" };
         private readonly string[] TEACHER_ROLE_URL = new string[] { };
 
         public JwtFilter(JwtService jwtService, ILogger<JwtFilter> logger)
@@ -30,18 +34,24 @@ namespace FinalProject.Security
                 string path = context.HttpContext.Request.Path;
                 if (!isIgnoreUrl(path))
                 {
-                    string jwtToken = GetTokenFromRequest(context.HttpContext.Request);
+                    
+                    string? jwtToken = GetTokenFromRequest(context.HttpContext.Request);
                     if (jwtToken.IsNullOrEmpty())
                     {
-                        context.HttpContext.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                        context.Result = new JsonResult(new BaseResponse<object>
+                        UserLoginPrinciple? loginPrinciple = AuthService.GetPrinciple(context.HttpContext);
+                        if (loginPrinciple != null)
                         {
-                            code = ResponseCode.ERROR.GetHashCode(),
-                            message = "Vui lòng đăng nhập"
-                        });
+                            context.HttpContext.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                            context.Result = new JsonResult(new BaseResponse<object>
+                            {
+                                code = ResponseCode.ERROR.GetHashCode(),
+                                message = "Vui lòng đăng nhập"
+                            });
+                            return;
+                        }
                         return;
                     }
-                    if (!jwtService.CheckTokenExpired(jwtToken))
+                    if (jwtService.CheckTokenExpired(jwtToken))
                     {
                         context.HttpContext.Response.StatusCode = StatusCodes.Status401Unauthorized;
                         context.Result = new JsonResult(new BaseResponse<object>
@@ -51,7 +61,7 @@ namespace FinalProject.Security
                         });
                         return;
                     }
-                    UserLoginPrinciple principle = jwtService.GetPrincipleFromToken(jwtToken);
+                    UserLoginPrinciple principle = JwtService.GetPrincipleFromToken(jwtToken);
                     if (isTeacherRoleUrl(path) && principle.Role != RoleName.TEACHER.ToString())
                     {
                         context.Result = new JsonResult(new BaseResponse<object>
@@ -61,7 +71,7 @@ namespace FinalProject.Security
                         });
                         return;
                     }
-                    context.HttpContext.Items["principle"] = principle;
+                    AuthService.SetPrinciple(context.HttpContext, principle);
                 }
             }
             catch (Exception ex)
@@ -114,7 +124,8 @@ namespace FinalProject.Security
                     {
                         return true;
                     }
-                } else
+                }
+                else
                 {
                     if (lowerUrl == path)
                     {
@@ -144,12 +155,12 @@ namespace FinalProject.Security
             return false;
         }
 
-        private string GetTokenFromRequest(HttpRequest request)
+        private string? GetTokenFromRequest(HttpRequest request)
         {
             string TOKEN_HEAD = "Bearer ";
             string HEADER_AUTHENTICATION = "Authorization";
-            string token = request.Headers[HEADER_AUTHENTICATION].ToString();
-            return token.Substring(TOKEN_HEAD.Length);
+            string? token = request.Headers[HEADER_AUTHENTICATION].ToString();
+            return token.IsNullOrEmpty() ? null : token.Substring(TOKEN_HEAD.Length);
         }
     }
 }

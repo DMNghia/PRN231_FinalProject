@@ -2,6 +2,8 @@
 using FinalProject.Dto;
 using FinalProject.Dto.Response;
 using FinalProject.Models;
+using Microsoft.IdentityModel.Tokens;
+using System.Text.Json;
 
 namespace FinalProject.Services
 {
@@ -17,7 +19,7 @@ namespace FinalProject.Services
             this.context = context;
         }
 
-        public async Task<BaseResponse<object>> LoginWithGoogle(string email, string name, HttpContext HttpContext)
+        public async Task<BaseResponse<SignInResponse>> LoginWithGoogle(string email, string name, HttpContext HttpContext)
         {
             _logger.LogInformation($"LOGIN WITH GOOGLE EMAIL: {email}; NAME: {name}");
             User? existUser = context.Users.FirstOrDefault(u => u.Email == email);
@@ -42,8 +44,15 @@ namespace FinalProject.Services
                     Role = user.Role,
                     TypeAuthentication = user.TypeAuthentication
                 });
-                HttpContext.Session.SetString("token", tokenValue);
-                return new BaseResponse<object>
+                HttpContext.Session.SetString("principle", JsonSerializer.Serialize(new UserLoginPrinciple
+                {
+                    Email = user.Email,
+                    FullName = user.FullName,
+                    IsActive = user.IsActive ?? false,
+                    Role = user.Role,
+                    TypeAuthentication = user.TypeAuthentication
+                }));
+                return new BaseResponse<SignInResponse>
                 {
                     code = ResponseCode.SUCCESS.GetHashCode(),
                     message = "Thành công",
@@ -61,7 +70,7 @@ namespace FinalProject.Services
                 Role = existUser.Role,
                 TypeAuthentication = existUser.TypeAuthentication
             });
-            return new BaseResponse<object>
+            return new BaseResponse<SignInResponse>
             {
                 code = ResponseCode.SUCCESS.GetHashCode(),
                 message = "Thành công",
@@ -70,6 +79,21 @@ namespace FinalProject.Services
                     Token = token
                 }
             };
+        }
+
+        public static void SetPrinciple(HttpContext context, UserLoginPrinciple principle)
+        {
+            context.Session.SetString("principle", JsonSerializer.Serialize(principle));
+        }
+
+        public static UserLoginPrinciple? GetPrinciple(HttpContext context)
+        {
+            string? principle_raw = context.Session.GetString("principle");
+            if (principle_raw.IsNullOrEmpty())
+            {
+                return null;
+            }
+            return JsonSerializer.Deserialize<UserLoginPrinciple>(principle_raw);
         }
     }
 }
