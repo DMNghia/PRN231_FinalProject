@@ -17,8 +17,8 @@ namespace FinalProject.Security
         private readonly JwtService jwtService;
         private readonly ILogger<JwtFilter> logger;
 
-        private readonly string[] WHITE_LIST_URL = new string[] { "/api/auth/sign-in", "/api/auth/sign-up", "/api/auth/active-account/*" };
-        private readonly string[] FRONT_END_URL = new string[] { "/dang-nhap", "/", "/dang-ky", "/dang-nhap-voi-google", "/google-response", "/kich-hoat-tai-khoan", "/Pricing", "/About", "/Course", "/Course-Detail", "/Event", "/Starter-Page", "/Trainers", "/Contact" };
+        private readonly string[] WHITE_LIST_URL = new string[] { "/api/auth/sign-in", "/api/auth/sign-up", "/api/auth/active-account/*", "/api/lesson/*", "/api/mooc/*" };
+        private readonly string[] FRONT_END_URL = new string[] { "/dang-nhap", "/", "/dang-ky", "/dang-nhap-voi-google", "/google-response", "/kich-hoat-tai-khoan", "/Pricing", "/About", "/Course", "/Course-Detail", "/Event", "/Starter-Page", "/Trainers", "/Contact", "/khoa-hoc/*", "/bai-hoc/*" };
         private readonly string[] TEACHER_ROLE_URL = new string[] { };
 
         public JwtFilter(JwtService jwtService, ILogger<JwtFilter> logger)
