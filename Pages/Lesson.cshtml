@@ -1,12 +1,15 @@
 ﻿@page "/khoa-hoc/{hrefKhoaHoc}/{hrefBaiHoc}"
 @using FinalProject.Dto;
 @using FinalProject.Constants
+@using FinalProject.Services
 @model FinalProject.Pages.LessonModel
 @{
     Layout = null;
     var lesson = ViewData["lesson"] as LessonDTO;
     var lessons = ViewData["lessons"] as List<LessonDTO>;
+    var moocs = ViewData["moocs"] as List<MoocDTO>;
     var hrefKhoaHoc = ViewData["hrefKhoaHoc"] as string;
+    UserLoginPrinciple? principle = AuthService.GetPrinciple(HttpContext);
     //bool isTeacher = false;
     //UserLoginPrinciple? principle = HttpContext.Items["principle"] as UserLoginPrinciple;
     //if (principle != null && principle.Role == RoleName.TEACHER.ToString())
@@ -162,8 +165,8 @@
         <form action="" method="post" id="addLesson">
             
                     <div class="wave-group">
-                        <input type="text" class="input" id="detailName" 
-                               style="margin-top: 20px;width: 80%" readonly>
+                        <input type="text" class="input" id="lessonName" name="LessonName"
+                       style="margin-top: 20px;width: 80%" required>
                         <span class="bar"></span>
                         <label class="label">
                             <span class="label-char" style="--index: 0">L</span>
@@ -178,19 +181,28 @@
                             <span class="label-char" style="--index: 8">e</span>
                         </label>
                     </div>
+            <div class="wave-group" style="margin-top: 20px;">
+                <label for="MoocId">Select Mooc:</label><br>
+                <select id="MoocId" name="MoocId" style="width: 80%;">
+                    @foreach (var mooc in moocs)
+                    {
+                        <option value="@mooc.Id">@mooc.Name</option>
+                    }
+                </select>
+            </div>
               
             <div class="wave-group" style="margin-top: 10px;">
                 <label class="label">
                     <span class="label-char" style="--index: 0; padding-top:20px">Description</span>
                 </label><br>
-                <textarea rows="10" cols="25" style="width: 80%;font-size: 16px;"
-                          placeholder="Add Description">
+                <textarea rows="10" cols="25" name="LessonDescription" style="width: 80%;font-size: 16px;"
+                          placeholder="Add Description" required">
 
             </textarea>
 
             </div>
             <div class="wave-group">
-                <input type="text" class="input" 
+                <input type="text" class="input" name="Href"
                        style="margin-top: 20px;width: 80%" required>
                 <span class="bar"></span>
                 <label class="label">
@@ -201,7 +213,7 @@
                 </label>
             </div>
             <div class="wave-group">
-                <input type="text" class="input"
+                <input type="text" class="input" name="VideoUrl"
                        style="margin-top: 20px;width: 80%" required>
                 <span class="bar"></span>
                 <label class="label">
@@ -210,7 +222,7 @@
                 </label>
             </div>
             <div class="wave-group">
-                <input type="text" class="input"
+                <input type="text" class="input" name="VideoTranscript"
                        style="margin-top: 20px;width: 80%" required>
                 <span class="bar"></span>
                 <label class="label">
@@ -220,7 +232,7 @@
             </div>
             <div class="" style="margin-top: 20px;">
                 
-                    <button type="submit" name="submitLesson" value="submitLesson"
+                    <button type="submit" name="SubmitAddLesson" value="SubmitAddLesson"
                             style="padding: 10px;cursor: pointer;border-radius: 7px;border: 1px solid #5c636a;margin-right: 20px;">
                         Đăng Bài học mới
                     </button>
@@ -235,34 +247,27 @@
         </form>
     </div>
     <div id="popup1">
-        <form method="post" >
-           
-              
-                
-                <div class="wave-group">
-                    <input type="text" class="input" id="detailName"  style="margin-top: 20px; width: 80%" readonly>
-                    <span class="bar"></span>
-                    <label class="label">
-                        <span class="label-char" style="--index: 0">N</span>
-                        <span class="label-char" style="--index: 1">a</span>
-                        <span class="label-char" style="--index: 2">m</span>
-                        <span class="label-char" style="--index: 3">e</span>
-                    </label>
-                </div>
+        <form method="post">
+            <input type="hidden" name="courseHref" value="@ViewData["hrefKhoaHoc"]" />
+            <div class="wave-group">
+                <input type="text" class="input" id="detailName" name="Name" style="margin-top: 20px; width: 80%" required>
+                <span class="bar"></span>
+                <label class="label">
+                    <span class="label-char" style="--index: 0">N</span>
+                    <span class="label-char" style="--index: 1">a</span>
+                    <span class="label-char" style="--index: 2">m</span>
+                    <span class="label-char" style="--index: 3">e</span>
+                </label>
+            </div>
             
-            <input type="hidden" name="movieId"  />
             <div class="wave-group" style="margin-top: 20px;">
-                <label>Dán link ở đây:</label><br>
-                <textarea rows="10" cols="25"  style="width: 80%; font-size: 16px;" placeholder="Paste here..." required></textarea>
+                <label>Mô Tả Mooc:</label><br>
+                <textarea rows="10" cols="25" name="Description" style="width: 80%; font-size: 16px;" placeholder="Paste here..." required></textarea>
             </div>
             <div style="margin-top: 20px;">
-                
-                    <button type="submit" style="padding: 10px; cursor: pointer; border-radius: 7px; border: 1px solid #5c636a; margin-right: 20px;">Tạo mooc</button>
-                
-
+                <button type="submit" name="SubmitAddMooc" value="SubmitAddMooc" style="padding: 10px; cursor: pointer; border-radius: 7px; border: 1px solid #5c636a; margin-right: 20px;">Tạo mooc</button>
                 <button type="button" onclick="toggle1()" style="padding: 10px; cursor: pointer; border-radius: 7px; border: 1px solid #5c636a;">Đóng</button>
             </div>
-            
         </form>
     </div>
     <div id="blur">
@@ -308,7 +313,8 @@
                     <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
                 </nav>
 
-                <a class="btn-getstarted" asp-page="/Login">Đăng nhập</a>
+                <a class="btn-getstarted" href="@(principle != null ? "/" : "/dang-nhap")">@(principle?.FullName != null ? principle.FullName : "Đăng nhập")</a>
+
 
             </div>
         </header>
@@ -351,15 +357,17 @@
                         </div>
                         <div class="col-lg-4">
 
-                            <div class="course-info d-flex justify-content-between align-items-center">
-                                <button class="btn btn-success pull-right justify-content-center btn-create-lesson"
-                                        type="button"
-                                        data-toggle="modal" data-target="#lessonModal" onclick="toggle1()">
-                                    <span class="icon"> <i class="fas fa-pencil-alt"></i> </span> <span>Thêm Mooc</span>
-                                </button>
-                            </div>
+                            @if (principle != null && principle.Role == RoleName.TEACHER.ToString())
+                            {
+                                <div class="course-info d-flex justify-content-between align-items-center">
+                                    <button class="btn btn-success pull-right justify-content-center btn-create-lesson"
+                                            type="button"
+                                            data-toggle="modal" data-target="#lessonModal" onclick="toggle1()">
+                                        <span class="icon"> <i class="fas fa-pencil-alt"></i> </span> <span>Thêm Mooc</span>
+                                    </button>
+                                </div>
 
-                            
+
                                 <div class="course-info d-flex justify-content-between align-items-center">
                                     <button class="btn btn-success pull-right justify-content-center btn-create-lesson"
                                             type="button"
@@ -367,8 +375,8 @@
                                         <span class="icon"> <i class="fas fa-pencil-alt"></i> </span> <span>Thêm bài học</span>
                                     </button>
                                 </div>
-                            
-
+                            }
+                           
                             <div class="course-info d-flex justify-content-between align-items-center">
                                 <h5>Available Seats</h5>
                                 <p>30</p>

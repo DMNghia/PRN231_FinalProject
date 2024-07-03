@@ -17,6 +17,20 @@ namespace FinalProject.Controllers
             _context = context;
         }
 
+        [HttpGet("GetMoocs")]
+        public async Task<IActionResult> GetMoocs()
+        {
+            var moocs = await _context.Moocs.Select(s=> new MoocDTO
+            {
+                Id = s.Id,
+                Name = s.Name,
+                CourseId = s.CourseId,
+                Description = s.Description,
+
+            }).ToListAsync();
+            return Ok(moocs);
+        }
+
         [HttpPost("AddMooc")]
         public async Task<IActionResult> AddMooc([FromQuery] string courseHref, [FromBody] MoocDTO moocDTO)
         {
@@ -27,7 +41,6 @@ namespace FinalProject.Controllers
 
             try
             {
-                
                 var course = await _context.Courses
                     .FirstOrDefaultAsync(c => c.Href == courseHref);
 
@@ -40,7 +53,7 @@ namespace FinalProject.Controllers
                 {
                     Name = moocDTO.Name,
                     Description = moocDTO.Description,
-                    CourseId = course.Id 
+                    CourseId = course.Id
                 };
 
                 _context.Moocs.Add(mooc);
@@ -53,6 +66,7 @@ namespace FinalProject.Controllers
                 return StatusCode(500, new { message = "An error occurred while adding the mooc.", error = ex.Message });
             }
         }
+
         [HttpPut("EditMooc/{id}")]
         public async Task<IActionResult> EditMooc(int id, [FromBody] MoocDTO moocDTO)
         {
