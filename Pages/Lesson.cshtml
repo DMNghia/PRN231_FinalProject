@@ -184,10 +184,14 @@
             <div class="wave-group" style="margin-top: 20px;">
                 <label for="MoocId">Select Mooc:</label><br>
                 <select id="MoocId" name="MoocId" style="width: 80%;">
-                    @foreach (var mooc in moocs)
+                    @if(moocs != null)
                     {
-                        <option value="@mooc.Id">@mooc.Name</option>
+                        @foreach (var mooc in moocs)
+                        {
+                            <option value="@mooc.Id">@mooc.Name</option>
+                        }
                     }
+
                 </select>
             </div>
               
@@ -243,7 +247,12 @@
                     Đóng
                 </button>
             </div>
-          
+            @if (!ModelState.IsValid)
+            {
+                <div class="alert alert-danger">
+                    @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+                </div>
+            }
         </form>
     </div>
     <div id="popup1">
@@ -328,7 +337,11 @@
                         <div class="row d-flex justify-content-center text-center">
                             <div class="col-lg-8">
                                 <h1>Chi tiết bài học</h1>
-                                <p class="mb-0">@lesson.Description</p>
+                                @if (lesson != null)
+                                {
+                                    <p class="mb-0">@lesson.Description</p>
+
+                                }
                             </div>
                         </div>
                     </div>
@@ -348,13 +361,22 @@
                 <div class="container" data-aos="fade-up">
 
                     <div class="row">
-                        <div class="col-lg-8">
-                            <iframe width="800" height="500" src="@lesson.VideoUrl" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                            <h3>@(lesson != null ? lesson.Name : "Loading...")</h3>
-                            <p>
-                                @(lesson != null ? lesson.VideoTranscript : "Loading...")
-                            </p>
-                        </div>
+                        @if(lesson != null)
+                        {
+                            <div class="col-lg-8">
+                                <iframe width="800" height="500" src="@lesson.VideoUrl" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                <h3>@(lesson != null ? lesson.Name : "Loading...")</h3>
+                                <p>
+                                    @(lesson != null ? lesson.VideoTranscript : "Loading...")
+                                </p>
+                            </div>
+                        }
+                        @if (!ModelState.IsValid)
+                        {
+                            <div class="alert alert-danger">
+                                @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+                            </div>
+                        }
                         <div class="col-lg-4">
 
                             @if (principle != null && principle.Role == RoleName.TEACHER.ToString())

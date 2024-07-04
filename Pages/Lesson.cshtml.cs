@@ -47,30 +47,47 @@ namespace FinalProject.Pages
                 }
                 else if (Request.Form.TryGetValue("SubmitAddLesson", out var submitLessonValue) && submitLessonValue == "SubmitAddLesson")
                 {
-                    // Process Lesson addition
-                    var lessonDTO = new LessonDTO
+                    var existingHrefResponse = await _httpClient.GetAsync($"https://localhost:5000/api/Lesson/CheckHrefExists?href={Request.Form["Href"]}");
+                    if (existingHrefResponse.IsSuccessStatusCode)
                     {
-                        Name = Request.Form["LessonName"],
-                        Description = Request.Form["LessonDescription"],
-                        Href = Request.Form["Href"],
-                        VideoUrl = Request.Form["VideoUrl"],
-                        VideoTranscript = Request.Form["VideoTranscript"],
-                        MoocId = int.Parse(Request.Form["MoocId"]),
-                    };
-                    var responseLesson = await _httpClient.PostAsJsonAsync("https://localhost:5000/api/Lesson/AddLesson", lessonDTO);
-                    if (responseLesson.IsSuccessStatusCode)
-                    {
-                        //phan nay van chua ok phai hoi NghiaDM vi ko tra ve page
-                        return RedirectToPage(new { hrefKhoaHoc = courseHref });
+                        var content = await existingHrefResponse.Content.ReadAsStringAsync();
+                        var isHrefExists = bool.Parse(content); 
+
+                        if (isHrefExists)
+                        {
+                            ModelState.AddModelError(string.Empty, "Href already exists. Please choose a different one.");
+                            return Page();
+
+                        }
+                        else
+                        {
+                            var lessonDTO = new LessonDTO
+                            {
+                                Name = Request.Form["LessonName"],
+                                Description = Request.Form["LessonDescription"],
+                                Href = Request.Form["Href"],
+                                VideoUrl = Request.Form["VideoUrl"],
+                                VideoTranscript = Request.Form["VideoTranscript"],
+                                MoocId = int.Parse(Request.Form["MoocId"]),
+                            };
+                            var responseLesson = await _httpClient.PostAsJsonAsync("https://localhost:5000/api/Lesson/AddLesson", lessonDTO);
+                            if (responseLesson.IsSuccessStatusCode)
+                            {
+                                return RedirectToPage();
+                            }
+                            else
+                            {
+                                var errorMessageLesson = await responseLesson.Content.ReadAsStringAsync();
+                                ModelState.AddModelError(string.Empty, $"Failed to add Lesson. Error message: {errorMessageLesson}");
+                            }
+                        }
                     }
                     else
                     {
-                        var errorMessageLesson = await responseLesson.Content.ReadAsStringAsync();
-                        ModelState.AddModelError(string.Empty, $"Failed to add Lesson. Error message: {errorMessageLesson}");
+                        ModelState.AddModelError(string.Empty, "Failed to check if href exists.");
                     }
                 }
 
-                // Handle any other cases or errors here
                 return Page();
             }
             catch (Exception ex)

@@ -53,6 +53,13 @@ namespace FinalProject.Controllers
             return Ok(lesson);
         }
 
+        [HttpGet("CheckHrefExists")]
+        public async Task<IActionResult> CheckHrefExists(string href)
+        {
+            var exists = await _context.Lessons.AnyAsync(l => l.Href == href);
+            return Ok(exists);
+        }
+
         [HttpGet("ListLesson")]
         public IActionResult getListLesson()
         {
