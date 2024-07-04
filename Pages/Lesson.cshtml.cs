@@ -86,7 +86,53 @@ namespace FinalProject.Pages
                     {
                         ModelState.AddModelError(string.Empty, "Failed to check if href exists.");
                     }
+                } else if(Request.Form.TryGetValue("SubmitEditLesson", out var submitEditLessonValue) && submitEditLessonValue == "SubmitEditLesson")
+                {
+                    
+                    var existingHrefResponse = await _httpClient.GetAsync($"https://localhost:5000/api/Lesson/CheckHrefExists?href={Request.Form["Href"]}");
+                    if (existingHrefResponse.IsSuccessStatusCode)
+                    {
+                        var content = await existingHrefResponse.Content.ReadAsStringAsync();
+                        var isHrefExists = bool.Parse(content);
+
+                        if (isHrefExists && Request.Form["Href"] != Request.Form["OldHref"])
+                        {
+                            ModelState.AddModelError(string.Empty, "Href already exists. Please choose a different one.");
+                            return Page();
+                        }
+                        else
+                        {
+                            
+                            var lessonDTO = new LessonDTO
+                            {
+                                Id = int.Parse(Request.Form["LessonId"]),
+                                Name = Request.Form["LessonName"],
+                                Description = Request.Form["LessonDescription"],
+                                Href = Request.Form["Href"],
+                                VideoUrl = Request.Form["VideoUrl"],
+                                VideoTranscript = Request.Form["VideoTranscript"],
+                                MoocId = int.Parse(Request.Form["MoocId"]),
+                            };
+
+							
+							var responseLesson = await _httpClient.PutAsJsonAsync($"https://localhost:5000/api/Lesson/EditLesson/{lessonDTO.Id}", lessonDTO);
+							if (responseLesson.IsSuccessStatusCode)
+                            {
+                                return RedirectToPage();
+                            }
+                            else
+                            {
+                                var errorMessageLesson = await responseLesson.Content.ReadAsStringAsync();
+                                ModelState.AddModelError(string.Empty, $"Failed to update Lesson. Error message: {errorMessageLesson}");
+                            }
+                        }
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, "Failed to check if href exists.");
+                    }
                 }
+
 
                 return Page();
             }
