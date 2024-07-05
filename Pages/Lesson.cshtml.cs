@@ -132,6 +132,21 @@ namespace FinalProject.Pages
                         ModelState.AddModelError(string.Empty, "Failed to check if href exists.");
                     }
                 }
+                else if (Request.Form.TryGetValue("SubmitDeleteLesson", out var submitDeleteLessonValue) && submitDeleteLessonValue == "SubmitDeleteLesson")
+                {
+                    int lessonId = int.Parse(Request.Form["LessonId"]);
+
+                    var response = await _httpClient.DeleteAsync($"https://localhost:5000/api/Lesson/DeleteLesson/{lessonId}");
+                    if (response.IsSuccessStatusCode)
+                    {
+                        return RedirectToPage("/Course-Detail");
+                    }
+                    else
+                    {
+                        var errorMessage = await response.Content.ReadAsStringAsync();
+                        ModelState.AddModelError(string.Empty, $"Failed to delete Lesson. Error message: {errorMessage}");
+                    }
+                }
 
 
                 return Page();
