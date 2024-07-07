@@ -4,693 +4,764 @@
 @using FinalProject.Services
 @model FinalProject.Pages.LessonModel
 @{
-    Layout = null;
-    var lesson = ViewData["lesson"] as LessonDTO;
-    var lessons = ViewData["lessons"] as List<LessonDTO>;
-    var moocs = ViewData["moocs"] as List<MoocDTO>;
-    var hrefKhoaHoc = ViewData["hrefKhoaHoc"] as string;
-    UserLoginPrinciple? principle = AuthService.GetPrinciple(HttpContext);
-    //bool isTeacher = false;
-    //UserLoginPrinciple? principle = HttpContext.Items["principle"] as UserLoginPrinciple;
-    //if (principle != null && principle.Role == RoleName.TEACHER.ToString())
-    //{
-    //    isTeacher = true;
-    //}
+	Layout = null;
+	var lesson = ViewData["lesson"] as LessonDTO;
+	var lessons = ViewData["lessons"] as List<LessonDTO>;
+	var moocs = ViewData["moocs"] as List<MoocDTO>;
+	var hrefKhoaHoc = ViewData["hrefKhoaHoc"] as string;
+	UserLoginPrinciple? principle = AuthService.GetPrinciple(HttpContext);
+	//bool isTeacher = false;
+	//UserLoginPrinciple? principle = HttpContext.Items["principle"] as UserLoginPrinciple;
+	//if (principle != null && principle.Role == RoleName.TEACHER.ToString())
+	//{
+	//    isTeacher = true;
+	//}
 
 }
 <!DOCTYPE html>
 <html lang="en">
-    
+
 <head>
-    <meta charset="utf-8">
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <title>Course Details - Mentor Bootstrap Template</title>
-    <meta content="" name="description">
-    <meta content="" name="keywords">
+	<meta charset="utf-8">
+	<meta content="width=device-width, initial-scale=1.0" name="viewport">
+	<title>Course Details - Mentor Bootstrap Template</title>
+	<meta content="" name="description">
+	<meta content="" name="keywords">
 
-    <!-- Favicons -->
-    <link href="/assets/img/favicon.png" rel="icon">
-    <link href="/assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+	<!-- Favicons -->
+	<link href="/assets/img/favicon.png" rel="icon">
+	<link href="/assets/img/apple-touch-icon.png" rel="apple-touch-icon">
 
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com" rel="preconnect">
-    <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+	<!-- Fonts -->
+	<link href="https://fonts.googleapis.com" rel="preconnect">
+	<link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
 
-    <!-- Vendor CSS Files -->
-    <link href="/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
-    <link href="/assets/vendor/aos/aos.css" rel="stylesheet">
-    <link href="/assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
-    <link href="/assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+	<!-- Vendor CSS Files -->
+	<link href="/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+	<link href="/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+	<link href="/assets/vendor/aos/aos.css" rel="stylesheet">
+	<link href="/assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+	<link href="/assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
 
-    <!-- Main CS/S File -->
-    <link href="/assets/css/main.css" rel="stylesheet">
+	<!-- Main CS/S File -->
+	<link href="/assets/css/main.css" rel="stylesheet">
 
-    <!-- =======================================================
-    * Template Name: Mentor
-    * Template URL: https://bootstrapmade.com/mentor-free-education-bootstrap-theme/
-    * Updated: Jun 06 2024 with Bootstrap v5.3.3
-    * Author: BootstrapMade.com
-    * License: https://bootstrapmade.com/license/
-    ======================================================== -->
-    <style>
-        #popup, #popup1,#popupEdit {
-            position: fixed;
-            top: 30%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 600px;
-            height: fit-content;
-            padding: 50px;
-            box-shadow: 0 5px 30px rgba(0, 0, 0, .30);
-            background: #ffffff;
-            visibility: hidden;
-            opacity: 0.5;
-            transition: 0.5s;
-            z-index: 9999;
-            border-radius: 10px;
-        }
+	<!-- =======================================================
+	* Template Name: Mentor
+	* Template URL: https://bootstrapmade.com/mentor-free-education-bootstrap-theme/
+	* Updated: Jun 06 2024 with Bootstrap v5.3.3
+	* Author: BootstrapMade.com
+	* License: https://bootstrapmade.com/license/
+	======================================================== -->
+	<style>
+		#popup, #popup1, #popupEdit {
+			position: fixed;
+			top: 30%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			width: 600px;
+			height: fit-content;
+			padding: 50px;
+			box-shadow: 0 5px 30px rgba(0, 0, 0, .30);
+			background: #ffffff;
+			visibility: hidden;
+			opacity: 0.5;
+			transition: 0.5s;
+			z-index: 9999;
+			border-radius: 10px;
+		}
 
-            #popup.active, #popup1.active, #popupEdit.active {
-                top: 50%;
-                visibility: visible;
-                opacity: 1;
-                transform: 0.5s;
-            }
+			#popup.active, #popup1.active, #popupEdit.active {
+				top: 50%;
+				visibility: visible;
+				opacity: 1;
+				transform: 0.5s;
+			}
 
-        #blur.active {
-            filter: blur(20px);
-            pointer-events: none;
-            user-select: none;
-        }
+		#blur.active {
+			filter: blur(20px);
+			pointer-events: none;
+			user-select: none;
+		}
 
-        .wave-group {
-            position: relative;
-        }
+		.wave-group {
+			position: relative;
+		}
 
-            .wave-group .input {
-                font-size: 16px;
-                padding: 10px 10px 10px 5px;
-                display: block;
-                width: 200px;
-                border: none;
-                border-bottom: 1px solid #515151;
-                background: transparent;
-            }
+			.wave-group .input {
+				font-size: 16px;
+				padding: 10px 10px 10px 5px;
+				display: block;
+				width: 200px;
+				border: none;
+				border-bottom: 1px solid #515151;
+				background: transparent;
+			}
 
-                .wave-group .input:focus {
-                    outline: none;
-                }
+				.wave-group .input:focus {
+					outline: none;
+				}
 
-            .wave-group .label {
-                color: #999;
-                font-size: 18px;
-                font-weight: normal;
-                position: absolute;
-                pointer-events: none;
-                left: 5px;
-                top: 10px;
-                display: flex;
-            }
+			.wave-group .label {
+				color: #999;
+				font-size: 18px;
+				font-weight: normal;
+				position: absolute;
+				pointer-events: none;
+				left: 5px;
+				top: 10px;
+				display: flex;
+			}
 
-            .wave-group .label-char {
-                transition: 0.2s ease all;
-                transition-delay: calc(var(--index) * .05s);
-            }
+			.wave-group .label-char {
+				transition: 0.2s ease all;
+				transition-delay: calc(var(--index) * .05s);
+			}
 
-            .wave-group .input:focus ~ label .label-char,
-            .wave-group .input:valid ~ label .label-char {
-                transform: translateY(-20px);
-                font-size: 14px;
-                color: #5264AE;
-            }
+			.wave-group .input:focus ~ label .label-char,
+			.wave-group .input:valid ~ label .label-char {
+				transform: translateY(-20px);
+				font-size: 14px;
+				color: #5264AE;
+			}
 
-            .wave-group .bar {
-                position: relative;
-                display: block;
-                width: 200px;
-            }
+			.wave-group .bar {
+				position: relative;
+				display: block;
+				width: 200px;
+			}
 
-                .wave-group .bar:before, .wave-group .bar:after {
-                    content: '';
-                    height: 2px;
-                    width: 0;
-                    bottom: 1px;
-                    position: absolute;
-                    background: #5264AE;
-                    transition: 0.2s ease all;
-                    -moz-transition: 0.2s ease all;
-                    -webkit-transition: 0.2s ease all;
-                }
+				.wave-group .bar:before, .wave-group .bar:after {
+					content: '';
+					height: 2px;
+					width: 0;
+					bottom: 1px;
+					position: absolute;
+					background: #5264AE;
+					transition: 0.2s ease all;
+					-moz-transition: 0.2s ease all;
+					-webkit-transition: 0.2s ease all;
+				}
 
-                .wave-group .bar:before {
-                    left: 50%;
-                }
+				.wave-group .bar:before {
+					left: 50%;
+				}
 
-                .wave-group .bar:after {
-                    right: 50%;
-                }
+				.wave-group .bar:after {
+					right: 50%;
+				}
 
-            .wave-group .input:focus ~ .bar:before,
-            .wave-group .input:focus ~ .bar:after {
-                width: 50%;
-            }
-    </style>
+			.wave-group .input:focus ~ .bar:before,
+			.wave-group .input:focus ~ .bar:after {
+				width: 50%;
+			}
+	</style>
 </head>
 
 <body class="course-details-page">
-    @*<h1>@principle.FullName</h1>*@
-    <div id="popup">
-        <form action="" method="post" id="addLesson">
-            
-                    <div class="wave-group">
-                        <input type="text" class="input" id="lessonName" name="LessonName"
-                       style="margin-top: 20px;width: 80%" required>
-                        <span class="bar"></span>
-                        <label class="label">
-                            <span class="label-char" style="--index: 0">L</span>
-                            <span class="label-char" style="--index: 1">e</span>
-                            <span class="label-char" style="--index: 2">s</span>
-                            <span class="label-char" style="--index: 3">s</span>
-                            <span class="label-char" style="--index: 4">o</span>
-                            <span class="label-char" style="--index: 5">n</span>
-                            <span class="label-char" style="--index: 6">N</span>
-                            <span class="label-char" style="--index: 7">a</span>
-                            <span class="label-char" style="--index: 8">m</span>
-                            <span class="label-char" style="--index: 8">e</span>
-                        </label>
-                    </div>
-            <div class="wave-group" style="margin-top: 20px;">
-                <label for="MoocId">Select Mooc:</label><br>
-                <select id="MoocId" name="MoocId" style="width: 80%;">
-                    @if(moocs != null)
-                    {
-                        @foreach (var mooc in moocs)
-                        {
-                            <option value="@mooc.Id">@mooc.Name</option>
-                        }
-                    }
+	@*<h1>@principle.FullName</h1>*@
+	<div id="popup">
+		<form action="" method="post" id="addLesson">
 
-                </select>
-            </div>
-              
-            <div class="wave-group" style="margin-top: 10px;">
-                <label class="label">
-                    <span class="label-char" style="--index: 0; padding-top:20px">Description</span>
-                </label><br>
-                <textarea rows="10" cols="25" name="LessonDescription" style="width: 80%;font-size: 16px;"
-                          placeholder="Add Description" required">
+			<div class="wave-group">
+				<input type="text" class="input" id="lessonName" name="LessonName"
+					   style="margin-top: 20px;width: 80%" required>
+				<span class="bar"></span>
+				<label class="label">
+					<span class="label-char" style="--index: 0">L</span>
+					<span class="label-char" style="--index: 1">e</span>
+					<span class="label-char" style="--index: 2">s</span>
+					<span class="label-char" style="--index: 3">s</span>
+					<span class="label-char" style="--index: 4">o</span>
+					<span class="label-char" style="--index: 5">n</span>
+					<span class="label-char" style="--index: 6">N</span>
+					<span class="label-char" style="--index: 7">a</span>
+					<span class="label-char" style="--index: 8">m</span>
+					<span class="label-char" style="--index: 8">e</span>
+				</label>
+			</div>
+			<div class="wave-group" style="margin-top: 20px;">
+				<label for="MoocId">Select Mooc:</label><br>
+				<select id="MoocId" name="MoocId" style="width: 80%;">
+					@if (moocs != null)
+					{
+						@foreach (var mooc in moocs)
+						{
+							<option value="@mooc.Id">@mooc.Name</option>
+						}
+					}
 
-            </textarea>
+				</select>
+			</div>
 
-            </div>
-            <div class="wave-group">
-                <input type="text" class="input" name="Href"
-                       style="margin-top: 20px;width: 80%" required>
-                <span class="bar"></span>
-                <label class="label">
-                    <span class="label-char" style="--index: 0">H</span>
-                    <span class="label-char" style="--index: 1">r</span>
-                    <span class="label-char" style="--index: 2">e</span>
-                    <span class="label-char" style="--index: 3">f</span>
-                </label>
-            </div>
-            <div class="wave-group">
-                <input type="text" class="input" name="VideoUrl"
-                       style="margin-top: 20px;width: 80%" required>
-                <span class="bar"></span>
-                <label class="label">
-                    <span class="label-char" style="--index: 0">Video URL</span>
-                    
-                </label>
-            </div>
-            <div class="wave-group">
-                <input type="text" class="input" name="VideoTranscript"
-                       style="margin-top: 20px;width: 80%" required>
-                <span class="bar"></span>
-                <label class="label">
-                    <span class="label-char" style="--index: 0">Video Transcript</span>
+			<div class="wave-group" style="margin-top: 10px;">
+				<label class="label">
+					<span class="label-char" style="--index: 0; padding-top:20px">Description</span>
+				</label><br>
+				<textarea rows="10" cols="25" name="LessonDescription" style="width: 80%;font-size: 16px;"
+						  placeholder="Add Description" required">
 
-                </label>
-            </div>
-            <div class="" style="margin-top: 20px;">
-                
-                    <button type="submit" name="SubmitAddLesson" value="SubmitAddLesson"
-                            style="padding: 10px;cursor: pointer;border-radius: 7px;border: 1px solid #5c636a;margin-right: 20px;">
-                        Đăng Bài học mới
-                    </button>
-                
+			</textarea>
 
-                <button type="button" onclick="toggle()"
-                        style="padding: 10px;cursor: pointer;border-radius: 7px;border: 1px solid #5c636a">
-                    Đóng
-                </button>
-            </div>
-            @if (!ModelState.IsValid)
-            {
-                <div class="alert alert-danger">
-                    @Html.ValidationSummary(false, "", new { @class = "text-danger" })
-                </div>
-            }
-        </form>
-    </div>
-    <div id="popup1">
-        <form method="post">
-            <input type="hidden" name="courseHref" value="@ViewData["hrefKhoaHoc"]" />
-            <div class="wave-group">
-                <input type="text" class="input" id="detailName" name="Name" style="margin-top: 20px; width: 80%" required>
-                <span class="bar"></span>
-                <label class="label">
-                    <span class="label-char" style="--index: 0">N</span>
-                    <span class="label-char" style="--index: 1">a</span>
-                    <span class="label-char" style="--index: 2">m</span>
-                    <span class="label-char" style="--index: 3">e</span>
-                </label>
-            </div>
-            
-            <div class="wave-group" style="margin-top: 20px;">
-                <label>Mô Tả Mooc:</label><br>
-                <textarea rows="10" cols="25" name="Description" style="width: 80%; font-size: 16px;" placeholder="Paste here..." required></textarea>
-            </div>
-            <div style="margin-top: 20px;">
-                <button type="submit" name="SubmitAddMooc" value="SubmitAddMooc" style="padding: 10px; cursor: pointer; border-radius: 7px; border: 1px solid #5c636a; margin-right: 20px;">Tạo mooc</button>
-                <button type="button" onclick="toggle1()" style="padding: 10px; cursor: pointer; border-radius: 7px; border: 1px solid #5c636a;">Đóng</button>
-            </div>
-        </form>
-    </div>
-    <div id="popupEdit">
-    <form  method="post" id="editLesson">
-        <input type="hidden" name="LessonId" value="@lesson?.Id" />
-        <input type="hidden" name="OldHref" value="@lesson?.Href" />
-        <div class="wave-group">
-            <input type="text" class="input" id="editLessonName" name="LessonName" value="@lesson?.Name"
-                   style="margin-top: 20px;width: 80%" required>
-            <span class="bar"></span>
-            <label class="label">
-                <span class="label-char" style="--index: 0">L</span>
-                <span class="label-char" style="--index: 1">e</span>
-                <span class="label-char" style="--index: 2">s</span>
-                <span class="label-char" style="--index: 3">s</span>
-                <span class="label-char" style="--index: 4">o</span>
-                <span class="label-char" style="--index: 5">n</span>
-                <span class="label-char" style="--index: 6">N</span>
-                <span class="label-char" style="--index: 7">a</span>
-                <span class="label-char" style="--index: 8">m</span>
-                <span class="label-char" style="--index: 9">e</span>
-            </label>
-        </div>
-        <div class="wave-group" style="margin-top: 20px;">
-            <label for="MoocId">Select Mooc:</label><br>
-            <select id="MoocId" name="MoocId" style="width: 80%;">
-                @if(moocs != null)
-                {
-                    @foreach (var mooc in moocs)
-                    {
-                            <option value="@mooc.Id" selected="@((mooc.Id== lesson.MoocId ) ? "selected" : null)">@mooc.Name</option>
-                    }
-                }
-            </select>
-        </div>
-        <div class="wave-group" style="margin-top: 10px;">
-            <label class="label">
-                <span class="label-char" style="--index: 0; padding-top:20px">Description</span>
-            </label><br>
-            <textarea rows="10" cols="25" name="LessonDescription" style="width: 80%;font-size: 16px;" placeholder="Add Description" required>@lesson?.Description</textarea>
-        </div>
-        <div class="wave-group">
-            <input type="text" class="input" name="Href" value="@lesson?.Href"
-                   style="margin-top: 20px;width: 80%" required>
-            <span class="bar"></span>
-            <label class="label">
-                <span class="label-char" style="--index: 0">H</span>
-                <span class="label-char" style="--index: 1">r</span>
-                <span class="label-char" style="--index: 2">e</span>
-                <span class="label-char" style="--index: 3">f</span>
-            </label>
-        </div>
-        <div class="wave-group">
-            <input type="text" class="input" name="VideoUrl" value="@lesson?.VideoUrl"
-                   style="margin-top: 20px;width: 80%" required>
-            <span class="bar"></span>
-            <label class="label">
-                <span class="label-char" style="--index: 0">Video URL</span>
-            </label>
-        </div>
-        <div class="wave-group">
-            <input type="text" class="input" name="VideoTranscript" value="@lesson?.VideoTranscript"
-                   style="margin-top: 20px;width: 80%" required>
-            <span class="bar"></span>
-            <label class="label">
-                <span class="label-char" style="--index: 0">Video Transcript</span>
-            </label>
-        </div>
-        <div class="" style="margin-top: 20px;">
-            <button type="submit" name="SubmitEditLesson" value="SubmitEditLesson"
-                    style="padding: 10px;cursor: pointer;border-radius: 7px;border: 1px solid #5c636a;margin-right: 20px;">
-                Cập nhật Bài học
-            </button>
-                <button type="submit" onclick="confirmDelete()"
-                        style="padding: 10px;cursor: pointer;border-radius: 7px;border: 1px solid #5c636a; background-color: red; color: white;">
-                    Xóa Bài học
-                </button>
-            <button type="button" onclick="toggleEdit()"
-                    style="padding: 10px;cursor: pointer;border-radius: 7px;border: 1px solid #5c636a">
-                Đóng
-            </button>
-        </div>
-        @if (!ModelState.IsValid)
-        {
-            <div class="alert alert-danger">
-                @Html.ValidationSummary(false, "", new { @class = "text-danger" })
-            </div>
-        }
-    </form>
-</div>
-    <div id="blur">
-        <header id="header" class="header d-flex align-items-center sticky-top">
-            <div class="container-fluid container-xl position-relative d-flex align-items-center">
+			</div>
+			<div class="wave-group">
+				<input type="text" class="input" name="Href"
+					   style="margin-top: 20px;width: 80%" required>
+				<span class="bar"></span>
+				<label class="label">
+					<span class="label-char" style="--index: 0">H</span>
+					<span class="label-char" style="--index: 1">r</span>
+					<span class="label-char" style="--index: 2">e</span>
+					<span class="label-char" style="--index: 3">f</span>
+				</label>
+			</div>
+			<div class="wave-group">
+				<input type="text" class="input" name="VideoUrl"
+					   style="margin-top: 20px;width: 80%" required>
+				<span class="bar"></span>
+				<label class="label">
+					<span class="label-char" style="--index: 0">Video URL</span>
 
-                <a href="index.html" class="logo d-flex align-items-center me-auto">
-                    <!-- Uncomment the line below if you also wish to use an image logo -->
-                    <!-- <img src="/assets/img/logo.png" alt=""> -->
-                    <h1 class="sitename">Free Course</h1>
-                </a>
+				</label>
+			</div>
+			<div class="wave-group">
+				<input type="text" class="input" name="VideoTranscript"
+					   style="margin-top: 20px;width: 80%" required>
+				<span class="bar"></span>
+				<label class="label">
+					<span class="label-char" style="--index: 0">Video Transcript</span>
 
-                <nav id="navmenu" class="navmenu">
-                    <ul>
-                        <li><a href="Index">Home<br></a></li>
-                        @*                    <li><a href="about.html">About</a></li>
-                        *@
-                        <li><a href="Course">Courses</a></li>
-                        @*<li><a href="trainers.html">Trainers</a></li>*@
-                        @*<li><a href="events.html">Events</a></li>*@
-                        @*<li><a href="pricing.html">Pricing</a></li>*@
-                        <li class="dropdown">
-                            <a href="#"><span>Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-                            <ul>
-                                <li><a href="#">Dropdown 1</a></li>
-                                <li class="dropdown">
-                                    <a href="#"><span>Deep Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-                                    <ul>
-                                        <li><a href="#">Deep Dropdown 1</a></li>
-                                        <li><a href="#">Deep Dropdown 2</a></li>
-                                        <li><a href="#">Deep Dropdown 3</a></li>
-                                        <li><a href="#">Deep Dropdown 4</a></li>
-                                        <li><a href="#">Deep Dropdown 5</a></li>
-                                    </ul>
-                                </li>
-                                <li><a href="#">Dropdown 2</a></li>
-                                <li><a href="#">Dropdown 3</a></li>
-                                <li><a href="#">Dropdown 4</a></li>
-                            </ul>
-                        </li>
-                        <li><a href="contact.html">Contact</a></li>
-                    </ul>
-                    <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
-                </nav>
+				</label>
+			</div>
+			<div class="" style="margin-top: 20px;">
 
-                <a class="btn-getstarted" href="@(principle != null ? "/" : "/dang-nhap")">@(principle?.FullName != null ? principle.FullName : "Đăng nhập")</a>
+				<button type="submit" name="SubmitAddLesson" value="SubmitAddLesson"
+						style="padding: 10px;cursor: pointer;border-radius: 7px;border: 1px solid #5c636a;margin-right: 20px;">
+					Đăng Bài học mới
+				</button>
 
 
-            </div>
-        </header>
+				<button type="button" onclick="toggle()"
+						style="padding: 10px;cursor: pointer;border-radius: 7px;border: 1px solid #5c636a">
+					Đóng
+				</button>
+			</div>
+			@if (!ModelState.IsValid)
+			{
+				<div class="alert alert-danger">
+					@Html.ValidationSummary(false, "", new { @class = "text-danger" })
+				</div>
+			}
+		</form>
+	</div>
+	<div id="popup1">
+		<form method="post">
+			<input type="hidden" name="courseHref" value="@ViewData["hrefKhoaHoc"]" />
+			<div class="wave-group">
+				<input type="text" class="input" id="detailName" name="Name" style="margin-top: 20px; width: 80%" required>
+				<span class="bar"></span>
+				<label class="label">
+					<span class="label-char" style="--index: 0">N</span>
+					<span class="label-char" style="--index: 1">a</span>
+					<span class="label-char" style="--index: 2">m</span>
+					<span class="label-char" style="--index: 3">e</span>
+				</label>
+			</div>
 
-        <main class="main">
+			<div class="wave-group" style="margin-top: 20px;">
+				<label>Mô Tả Mooc:</label><br>
+				<textarea rows="10" cols="25" name="Description" style="width: 80%; font-size: 16px;" placeholder="Paste here..." required></textarea>
+			</div>
+			<div style="margin-top: 20px;">
+				<button type="submit" name="SubmitAddMooc" value="SubmitAddMooc" style="padding: 10px; cursor: pointer; border-radius: 7px; border: 1px solid #5c636a; margin-right: 20px;">Tạo mooc</button>
+				<button type="button" onclick="toggle1()" style="padding: 10px; cursor: pointer; border-radius: 7px; border: 1px solid #5c636a;">Đóng</button>
+			</div>
+		</form>
+	</div>
+	<div id="popupEdit">
+		<form method="post" id="editLesson">
+			<input type="hidden" name="LessonId" value="@lesson?.Id" />
+			<input type="hidden" name="OldHref" value="@lesson?.Href" />
+			<div class="wave-group">
+				<input type="text" class="input" id="editLessonName" name="LessonName" value="@lesson?.Name"
+					   style="margin-top: 20px;width: 80%" required>
+				<span class="bar"></span>
+				<label class="label">
+					<span class="label-char" style="--index: 0">L</span>
+					<span class="label-char" style="--index: 1">e</span>
+					<span class="label-char" style="--index: 2">s</span>
+					<span class="label-char" style="--index: 3">s</span>
+					<span class="label-char" style="--index: 4">o</span>
+					<span class="label-char" style="--index: 5">n</span>
+					<span class="label-char" style="--index: 6">N</span>
+					<span class="label-char" style="--index: 7">a</span>
+					<span class="label-char" style="--index: 8">m</span>
+					<span class="label-char" style="--index: 9">e</span>
+				</label>
+			</div>
+			<div class="wave-group" style="margin-top: 20px;">
+				<label for="MoocId">Select Mooc:</label><br>
+				<select id="MoocId" name="MoocId" style="width: 80%;">
+					@if (moocs != null)
+					{
+						@foreach (var mooc in moocs)
+						{
+							<option value="@mooc.Id" selected="@((mooc.Id== lesson.MoocId ) ? "selected" : null)">@mooc.Name</option>
+						}
+					}
+				</select>
+			</div>
+			<div class="wave-group" style="margin-top: 10px;">
+				<label class="label">
+					<span class="label-char" style="--index: 0; padding-top:20px">Description</span>
+				</label><br>
+				<textarea rows="10" cols="25" name="LessonDescription" style="width: 80%;font-size: 16px;" placeholder="Add Description" required>@lesson?.Description</textarea>
+			</div>
+			<div class="wave-group">
+				<input type="text" class="input" name="Href" value="@lesson?.Href"
+					   style="margin-top: 20px;width: 80%" required>
+				<span class="bar"></span>
+				<label class="label">
+					<span class="label-char" style="--index: 0">H</span>
+					<span class="label-char" style="--index: 1">r</span>
+					<span class="label-char" style="--index: 2">e</span>
+					<span class="label-char" style="--index: 3">f</span>
+				</label>
+			</div>
+			<div class="wave-group">
+				<input type="text" class="input" name="VideoUrl" value="@lesson?.VideoUrl"
+					   style="margin-top: 20px;width: 80%" required>
+				<span class="bar"></span>
+				<label class="label">
+					<span class="label-char" style="--index: 0">Video URL</span>
+				</label>
+			</div>
+			<div class="wave-group">
+				<input type="text" class="input" name="VideoTranscript" value="@lesson?.VideoTranscript"
+					   style="margin-top: 20px;width: 80%" required>
+				<span class="bar"></span>
+				<label class="label">
+					<span class="label-char" style="--index: 0">Video Transcript</span>
+				</label>
+			</div>
+			<div class="" style="margin-top: 20px;">
+				<button type="submit" name="SubmitEditLesson" value="SubmitEditLesson"
+						style="padding: 10px;cursor: pointer;border-radius: 7px;border: 1px solid #5c636a;margin-right: 20px;">
+					Cập nhật Bài học
+				</button>
+				<button type="submit" onclick="confirmDelete()"
+						style="padding: 10px;cursor: pointer;border-radius: 7px;border: 1px solid #5c636a; background-color: red; color: white;">
+					Xóa Bài học
+				</button>
+				<button type="button" onclick="toggleEdit()"
+						style="padding: 10px;cursor: pointer;border-radius: 7px;border: 1px solid #5c636a">
+					Đóng
+				</button>
+			</div>
+			@if (!ModelState.IsValid)
+			{
+				<div class="alert alert-danger">
+					@Html.ValidationSummary(false, "", new { @class = "text-danger" })
+				</div>
+			}
+		</form>
+	</div>
+	<div id="blur">
+		<header id="header" class="header d-flex align-items-center sticky-top">
+			<div class="container-fluid container-xl position-relative d-flex align-items-center">
 
-            <!-- Page Title -->
-            <div class="page-title" data-aos="fade">
-                <div class="heading">
-                    <div class="container">
-                        <div class="row d-flex justify-content-center text-center">
-                            <div class="col-lg-8">
-                                <h1>Chi tiết bài học</h1>
-                                @if (lesson != null)
-                                {
-                                    <p class="mb-0">@lesson.Description</p>
+				<a href="index.html" class="logo d-flex align-items-center me-auto">
+					<!-- Uncomment the line below if you also wish to use an image logo -->
+					<!-- <img src="/assets/img/logo.png" alt=""> -->
+					<h1 class="sitename">Free Course</h1>
+				</a>
 
-                                }
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <nav class="breadcrumbs">
-                    <div class="container">
-                        <ol>
-                            <li><a href="Index">Trang Chủ</a></li>
-                            <li class="current">Chi tiết bài học</li>
-                        </ol>
-                    </div>
-                </nav>
-            </div><!-- End Page Title -->
-            <!-- Courses Course Details Section -->
-            <section id="courses-course-details" class="courses-course-details section">
+				<nav id="navmenu" class="navmenu">
+					<ul>
+						<li><a href="Index">Home<br></a></li>
+						@*                    <li><a href="about.html">About</a></li>
+						*@
+						<li><a href="Course">Courses</a></li>
+						@*<li><a href="trainers.html">Trainers</a></li>*@
+						@*<li><a href="events.html">Events</a></li>*@
+						@*<li><a href="pricing.html">Pricing</a></li>*@
+						<li class="dropdown">
+							<a href="#"><span>Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+							<ul>
+								<li><a href="#">Dropdown 1</a></li>
+								<li class="dropdown">
+									<a href="#"><span>Deep Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+									<ul>
+										<li><a href="#">Deep Dropdown 1</a></li>
+										<li><a href="#">Deep Dropdown 2</a></li>
+										<li><a href="#">Deep Dropdown 3</a></li>
+										<li><a href="#">Deep Dropdown 4</a></li>
+										<li><a href="#">Deep Dropdown 5</a></li>
+									</ul>
+								</li>
+								<li><a href="#">Dropdown 2</a></li>
+								<li><a href="#">Dropdown 3</a></li>
+								<li><a href="#">Dropdown 4</a></li>
+							</ul>
+						</li>
+						<li><a href="contact.html">Contact</a></li>
+					</ul>
+					<i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+				</nav>
 
-                <div class="container" data-aos="fade-up">
-
-                    <div class="row">
-                        @if(lesson != null)
-                        {
-                            <div class="col-lg-8">
-                                <iframe width="800" height="500" src="@lesson.VideoUrl" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                                <h3>@(lesson != null ? lesson.Name : "Loading...")</h3>
-                                <p>
-                                    @(lesson != null ? lesson.VideoTranscript : "Loading...")
-                                </p>
-                            </div>
-                        }
-                        @if (!ModelState.IsValid)
-                        {
-                            <div class="alert alert-danger">
-                                @Html.ValidationSummary(false, "", new { @class = "text-danger" })
-                            </div>
-                        }
-                        <div class="col-lg-4">
-
-                            @if (principle != null && principle.Role == RoleName.TEACHER.ToString())
-                            {
-                                <div class="course-info d-flex justify-content-between align-items-center">
-                                    <button class="btn btn-success pull-right justify-content-center btn-create-lesson"
-                                            type="button"
-                                            data-toggle="modal" data-target="#lessonModal" onclick="toggle1()">
-                                        <span class="icon"> <i class="fas fa-pencil-alt"></i> </span> <span>Thêm Mooc</span>
-                                    </button>
-                                </div>
+				<a class="btn-getstarted" href="@(principle != null ? "/" : "/dang-nhap")">@(principle?.FullName != null ? principle.FullName : "Đăng nhập")</a>
 
 
-                                <div class="course-info d-flex justify-content-between align-items-center">
-                                    <button class="btn btn-success pull-right justify-content-center btn-create-lesson"
-                                            type="button"
-                                            data-toggle="modal" data-target="#lessonModal" onclick="toggle()">
-                                        <span class="icon"> <i class="fas fa-pencil-alt"></i> </span> <span>Thêm bài học</span>
-                                    </button>
-                                </div>
+			</div>
+		</header>
 
-                                <div class="course-info d-flex justify-content-between align-items-center">
-                                    <button class="btn btn-success pull-right justify-content-center btn-edit-lesson"
-                                            type="button"
-                                            data-toggle="modal" data-target="#lessonEditModal" onclick="toggleEdit()">
-                                        <span class="icon"> <i class="fas fa-pencil-alt"></i> </span> <span>Chỉnh sửa bài học</span>
-                                    </button>
-                                </div>
-                            }
-                           
-                           
+		<main class="main">
 
-                            <div class="course-info d-flex justify-content-between align-items-center">
-                                <h5>Schedule</h5>
-                                <p>5.00 pm - 7.00 pm</p>
-                            </div>
+			<!-- Page Title -->
+			<div class="page-title" data-aos="fade">
+				<div class="heading">
+					<div class="container">
+						<div class="row d-flex justify-content-center text-center">
+							<div class="col-lg-8">
+								<h1>Chi tiết bài học</h1>
+								@if (lesson != null)
+								{
+									<p class="mb-0">@lesson.Description</p>
 
-                        </div>
-                    </div>
+								}
+							</div>
+						</div>
+					</div>
+				</div>
+				<nav class="breadcrumbs">
+					<div class="container">
+						<ol>
+							<li><a href="Index">Trang Chủ</a></li>
+							<li class="current">Chi tiết bài học</li>
+						</ol>
+					</div>
+				</nav>
+			</div><!-- End Page Title -->
+			<!-- Courses Course Details Section -->
+			<section id="courses-course-details" class="courses-course-details section">
 
-                </div>
+				<div class="container" data-aos="fade-up">
 
-            </section><!-- /Courses Course Details Section -->
-            <!-- Tabs Section -->
-            <section id="tabs" class="tabs section">
+					<div class="row">
+						@if (lesson != null)
+						{
+							<div class="col-lg-8">
+								<iframe width="800" height="500" src="@lesson.VideoUrl" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+								<h3>@(lesson != null ? lesson.Name : "Loading...")</h3>
+								<p>
+									@(lesson != null ? lesson.VideoTranscript : "Loading...")
+								</p>
+							</div>
+						}
+						@if (!ModelState.IsValid)
+						{
+							<div class="alert alert-danger">
+								@Html.ValidationSummary(false, "", new { @class = "text-danger" })
+							</div>
+						}
+						<div class="col-lg-4">
 
-                <div class="container" data-aos="fade-up" data-aos-delay="100">
-
-                    <div class="row">
-                        <div class="col-lg-3">
-                            <ul class="nav nav-tabs flex-column">
-                                @if (lessons != null)
-                                {
-                                    foreach (var item in lessons)
-                                    {
-                                        <li class="nav-item">
-                                            <a class="nav-link @(item.Href == lesson?.Href ? "active show" : "")" href="/khoa-hoc/@hrefKhoaHoc/@item.Href">@item.Name</a>
-                                        </li>
-                                    }
-                                }
-                            </ul>
-                        </div>
-                        <div class="col-lg-9 mt-4 mt-lg-0">
-                            <div class="tab-content">
-                                <div class="tab-pane active show" id="tab-1">
-                                    <div class="row">
-                                        <div class="col-lg-8 details order-2 order-lg-1">
-                                            @if (lesson != null)
-                                            {
-                                                <h3>Tên bài: @lesson.Name</h3>
-                                                <p> Mô tả: @lesson.Description</p>
-                                                <p>Ngày tạo: @lesson.CreateAt.Value.ToString("dd/MM/yyyy")</p>
-                                            }
-
-                                        </div>
-                                        <div class="col-lg-4 text-center order-1 order-lg-2">
-                                            <img src="/assets/img/tabs/tab-1.png" alt="" class="img-fluid">
-                                        </div>
-                                    </div>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
+							@if (principle != null && principle.Role == RoleName.TEACHER.ToString())
+							{
+								<div class="course-info d-flex justify-content-between align-items-center">
+									<button class="btn btn-success pull-right justify-content-center btn-create-lesson"
+											type="button"
+											data-toggle="modal" data-target="#lessonModal" onclick="toggle1()">
+										<span class="icon"> <i class="fas fa-pencil-alt"></i> </span> <span>Thêm Mooc</span>
+									</button>
+								</div>
 
 
-            </section><!-- /Tabs Section -->
+								<div class="course-info d-flex justify-content-between align-items-center">
+									<button class="btn btn-success pull-right justify-content-center btn-create-lesson"
+											type="button"
+											data-toggle="modal" data-target="#lessonModal" onclick="toggle()">
+										<span class="icon"> <i class="fas fa-pencil-alt"></i> </span> <span>Thêm bài học</span>
+									</button>
+								</div>
 
-        </main>
+								<div class="course-info d-flex justify-content-between align-items-center">
+									<button class="btn btn-success pull-right justify-content-center btn-edit-lesson"
+											type="button"
+											data-toggle="modal" data-target="#lessonEditModal" onclick="toggleEdit()">
+										<span class="icon"> <i class="fas fa-pencil-alt"></i> </span> <span>Chỉnh sửa bài học</span>
+									</button>
+								</div>
+							}
 
-        <footer id="footer" class="footer position-relative">
 
-            <div class="container footer-top">
-                <div class="row gy-4">
-                    <div class="col-lg-4 col-md-6 footer-about">
-                        <a href="index.html" class="logo d-flex align-items-center">
-                            <span class="sitename">Mentor</span>
-                        </a>
-                        <div class="footer-contact pt-3">
-                            <p>A108 Adam Street</p>
-                            <p>New York, NY 535022</p>
-                            <p class="mt-3"><strong>Phone:</strong> <span>+1 5589 55488 55</span></p>
-                            <p><strong>Email:</strong> <span>info@example.com</span></p>
-                        </div>
-                        <div class="social-links d-flex mt-4">
-                            <a href=""><i class="bi bi-twitter-x"></i></a>
-                            <a href=""><i class="bi bi-facebook"></i></a>
-                            <a href=""><i class="bi bi-instagram"></i></a>
-                            <a href=""><i class="bi bi-linkedin"></i></a>
-                        </div>
-                    </div>
 
-                    <div class="col-lg-2 col-md-3 footer-links">
-                        <h4>Useful Links</h4>
-                        <ul>
-                            <li><a href="#">Home</a></li>
-                            <li><a href="#">About us</a></li>
-                            <li><a href="#">Services</a></li>
-                            <li><a href="#">Terms of service</a></li>
-                            <li><a href="#">Privacy policy</a></li>
-                        </ul>
-                    </div>
+							<div class="course-info d-flex justify-content-between align-items-center">
+								<h5>Schedule</h5>
+								<p>5.00 pm - 7.00 pm</p>
+							</div>
 
-                    <div class="col-lg-2 col-md-3 footer-links">
-                        <h4>Our Services</h4>
-                        <ul>
-                            <li><a href="#">Web Design</a></li>
-                            <li><a href="#">Web Development</a></li>
-                            <li><a href="#">Product Management</a></li>
-                            <li><a href="#">Marketing</a></li>
-                            <li><a href="#">Graphic Design</a></li>
-                        </ul>
-                    </div>
+						</div>
+					</div>
 
-                    <div class="col-lg-4 col-md-12 footer-newsletter">
-                        <h4>Our Newsletter</h4>
-                        <p>Subscribe to our newsletter and receive the latest news about our products and services!</p>
-                        <form action="forms/newsletter.php" method="post" class="php-email-form">
-                            <div class="newsletter-form"><input type="email" name="email"><input type="submit" value="Subscribe"></div>
-                            <div class="loading">Loading</div>
-                            <div class="error-message"></div>
-                            <div class="sent-message">Your subscription request has been sent. Thank you!</div>
-                        </form>
-                    </div>
+				</div>
 
-                </div>
-            </div>
+			</section><!-- /Courses Course Details Section -->
+			<!-- Tabs Section -->
+			<section id="tabs" class="tabs section">
 
-            <div class="container copyright text-center mt-4">
-                <p>© <span>Copyright</span> <strong class="px-1 sitename">Mentor</strong> <span>All Rights Reserved</span></p>
-                <div class="credits">
-                    <!-- All the links in the footer should remain intact. -->
-                    <!-- You can delete the links only if you've purchased the pro version. -->
-                    <!-- Licensing information: https://bootstrapmade.com/license/ -->
-                    <!-- Purchase the pro version with working PHP/AJAX contact form: [buy-url] -->
-                    Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
-                </div>
-            </div>
+				<div class="container" data-aos="fade-up" data-aos-delay="100">
 
-        </footer>
-    </div>
-   
+					<div class="row">
+						@* <div class="col-lg-3">
+						<ul class="nav nav-tabs flex-column">
+						@if (lessons != null)
+						{
+						foreach (var item in lessons)
+						{
+						<li class="nav-item">
+						<a class="nav-link @(item.Href == lesson?.Href ? "active show" : "")" href="/khoa-hoc/@hrefKhoaHoc/@item.Href">@item.Name</a>
+						</li>
+						}
+						}
+						</ul>
+						</div>*@
+						<div class="col-lg-3">
+							<h4>Moocs:</h4>
+							<ul class="nav nav-tabs flex-column">
+								@if (moocs != null)
+								{
+									foreach (var mooc in moocs)
+									{
+										<li class="nav-item">
+											<a class="nav-link" href="javascript:void(0)" onclick="showLessons(@mooc.Id)">@mooc.Name</a>
+											@if (principle != null && principle.Role == RoleName.TEACHER.ToString())
+											{
+												<form method="post" asp-page-handler="DeleteMooc" id="deleteMooc-@mooc.Id" style="display:inline;" onsubmit="return confirmDeleteMooc(@mooc.Id)">
+												<input type="hidden" name="MoocId" value="@mooc.Id" />
+												<button type="submit" class="btn btn-danger btn-sm" name="SubmitDeleteMooc" value="SubmitDeleteMooc" style="margin-left: 10px;">Xóa</button>
+											</form>
+											}
+											
+										</li>
+									}
 
-    <!-- Scroll Top -->
-    <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+								}
+							</ul>
 
-    <!-- Preloader -->
-    <div id="preloader"></div>
 
-    <!-- Vendor JS Files -->
-    <script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="/assets/vendor/php-email-form/validate.js"></script>
-    <script src="/assets/vendor/aos/aos.js"></script>
-    <script src="/assets/vendor/glightbox/js/glightbox.min.js"></script>
-    <script src="/assets/vendor/purecounter/purecounter_vanilla.js"></script>
-    <script src="/assets/vendor/swiper/swiper-bundle.min.js"></script>
+							<h4 style="margin-top: 20px;">Lessons:</h4>
+							<ul class="nav nav-tabs flex-column" id="lessonList">
+								@if (lessons != null)
+								{
+									foreach (var item in lessons)
+									{
+										<li class="nav-item mooc-lesson" data-mooc-id="@item.MoocId" style="display: none;">
+											<a class="nav-link @(item.Href == lesson?.Href ? "active show" : "")" href="/khoa-hoc/@hrefKhoaHoc/@item.Href">@item.Name</a>
+										</li>
+									}
+								}
+							</ul>
+						</div>
+						<div class="col-lg-9 mt-4 mt-lg-0">
+							<div class="tab-content">
+								<div class="tab-pane active show" id="tab-1">
+									<div class="row">
+										<div class="col-lg-8 details order-2 order-lg-1">
+											
+												<h3>Tên bài: @lesson?.Name</h3>
+												<p> Mô tả: @lesson?.Description</p>
+												<p>
+													@if (lesson != null)
+													{
+														var lessonMooc = moocs?.FirstOrDefault(m => m.Id == lesson.MoocId);
+														if (lessonMooc != null)
+														{
+															<p>Mooc: @lessonMooc.Name</p>
+														}
+														else
+														{
+															<p>No Mooc associated with this lesson.</p>
+														}
+													}
+												</p>
+												<p>Ngày tạo: @lesson?.CreateAt.Value.ToString("dd/MM/yyyy")</p>
+											
 
-    <!-- Main JS File -->
-    <script src="/assets/js/main.js"></script>
-    <script>
-        function toggle1() {
-            var blur = document.getElementById('blur');
-            blur.classList.toggle('active');
-            var popup = document.getElementById('popup1');
-            popup.classList.toggle('active');
-        }
+										</div>
+										<div class="col-lg-4 text-center order-1 order-lg-2">
+											<img src="/assets/img/tabs/tab-1.png" alt="" class="img-fluid">
+										</div>
+									</div>
+								</div>
 
-        function alertDelete(id) {
-            document.getElementById("deleteId").value = id;
-        }
+							</div>
+						</div>
+					</div>
+				</div>
 
-        function toggleDelete() {
-            var blur = document.getElementById('blur');
-            blur.classList.toggle('active');
-            var deleteDiv = document.getElementById('deleteDiv');
-            deleteDiv.classList.toggle('active');
-        }
 
-        function toggle() {
-            var blur = document.getElementById('blur');
-            blur.classList.toggle('active');
-            var popup = document.getElementById('popup');
-            popup.classList.toggle('active');
-        }
+			</section><!-- /Tabs Section -->
 
-        function toggleEdit() {
-            var blur = document.getElementById('blur');
-            blur.classList.toggle('active');
-            var popup = document.getElementById('popupEdit');
-            popup.classList.toggle('active');
-        }
+		</main>
 
-        function confirmDelete() {
-            if (confirm("Bạn có chắc muốn xóa bài học này không?")) {
-            
-                var form = document.getElementById('editLesson');
-                var input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = 'SubmitDeleteLesson';
-                input.value = 'SubmitDeleteLesson';
-                form.appendChild(input);
-                form.submit();
-            }
-        }
-    </script>
+		<footer id="footer" class="footer position-relative">
+
+			<div class="container footer-top">
+				<div class="row gy-4">
+					<div class="col-lg-4 col-md-6 footer-about">
+						<a href="index.html" class="logo d-flex align-items-center">
+							<span class="sitename">Mentor</span>
+						</a>
+						<div class="footer-contact pt-3">
+							<p>A108 Adam Street</p>
+							<p>New York, NY 535022</p>
+							<p class="mt-3"><strong>Phone:</strong> <span>+1 5589 55488 55</span></p>
+							<p><strong>Email:</strong> <span>info@example.com</span></p>
+						</div>
+						<div class="social-links d-flex mt-4">
+							<a href=""><i class="bi bi-twitter-x"></i></a>
+							<a href=""><i class="bi bi-facebook"></i></a>
+							<a href=""><i class="bi bi-instagram"></i></a>
+							<a href=""><i class="bi bi-linkedin"></i></a>
+						</div>
+					</div>
+
+					<div class="col-lg-2 col-md-3 footer-links">
+						<h4>Useful Links</h4>
+						<ul>
+							<li><a href="#">Home</a></li>
+							<li><a href="#">About us</a></li>
+							<li><a href="#">Services</a></li>
+							<li><a href="#">Terms of service</a></li>
+							<li><a href="#">Privacy policy</a></li>
+						</ul>
+					</div>
+
+					<div class="col-lg-2 col-md-3 footer-links">
+						<h4>Our Services</h4>
+						<ul>
+							<li><a href="#">Web Design</a></li>
+							<li><a href="#">Web Development</a></li>
+							<li><a href="#">Product Management</a></li>
+							<li><a href="#">Marketing</a></li>
+							<li><a href="#">Graphic Design</a></li>
+						</ul>
+					</div>
+
+					<div class="col-lg-4 col-md-12 footer-newsletter">
+						<h4>Our Newsletter</h4>
+						<p>Subscribe to our newsletter and receive the latest news about our products and services!</p>
+						<form action="forms/newsletter.php" method="post" class="php-email-form">
+							<div class="newsletter-form"><input type="email" name="email"><input type="submit" value="Subscribe"></div>
+							<div class="loading">Loading</div>
+							<div class="error-message"></div>
+							<div class="sent-message">Your subscription request has been sent. Thank you!</div>
+						</form>
+					</div>
+
+				</div>
+			</div>
+
+			<div class="container copyright text-center mt-4">
+				<p>© <span>Copyright</span> <strong class="px-1 sitename">Mentor</strong> <span>All Rights Reserved</span></p>
+				<div class="credits">
+					<!-- All the links in the footer should remain intact. -->
+					<!-- You can delete the links only if you've purchased the pro version. -->
+					<!-- Licensing information: https://bootstrapmade.com/license/ -->
+					<!-- Purchase the pro version with working PHP/AJAX contact form: [buy-url] -->
+					Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+				</div>
+			</div>
+
+		</footer>
+	</div>
+
+
+	<!-- Scroll Top -->
+	<a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+	<!-- Preloader -->
+	<div id="preloader"></div>
+
+	<!-- Vendor JS Files -->
+	<script src="/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+	<script src="/assets/vendor/php-email-form/validate.js"></script>
+	<script src="/assets/vendor/aos/aos.js"></script>
+	<script src="/assets/vendor/glightbox/js/glightbox.min.js"></script>
+	<script src="/assets/vendor/purecounter/purecounter_vanilla.js"></script>
+	<script src="/assets/vendor/swiper/swiper-bundle.min.js"></script>
+
+	<!-- Main JS File -->
+	<script src="/assets/js/main.js"></script>
+	<script>
+		function toggle1() {
+			var blur = document.getElementById('blur');
+			blur.classList.toggle('active');
+			var popup = document.getElementById('popup1');
+			popup.classList.toggle('active');
+		}
+
+		function alertDelete(id) {
+			document.getElementById("deleteId").value = id;
+		}
+
+		function toggleDelete() {
+			var blur = document.getElementById('blur');
+			blur.classList.toggle('active');
+			var deleteDiv = document.getElementById('deleteDiv');
+			deleteDiv.classList.toggle('active');
+		}
+
+		function toggle() {
+			var blur = document.getElementById('blur');
+			blur.classList.toggle('active');
+			var popup = document.getElementById('popup');
+			popup.classList.toggle('active');
+		}
+
+		function toggleEdit() {
+			var blur = document.getElementById('blur');
+			blur.classList.toggle('active');
+			var popup = document.getElementById('popupEdit');
+			popup.classList.toggle('active');
+		}
+
+		function confirmDelete() {
+			if (confirm("Bạn có chắc muốn xóa bài học này không?")) {
+
+				var form = document.getElementById('editLesson');
+				var input = document.createElement('input');
+				input.type = 'hidden';
+				input.name = 'SubmitDeleteLesson';
+				input.value = 'SubmitDeleteLesson';
+				form.appendChild(input);
+				form.submit();
+			}
+		}
+
+		function confirmDeleteMooc(moocId) {
+			if (confirm("Bạn có chắc muốn xóa mooc này không?")) {
+				var form = document.getElementById('deleteMooc-' + moocId);
+				return true;
+			}
+			return false; 
+		}
+
+	</script>
+	<script>
+		function showLessons(moocId) {
+			var lessons = document.getElementsByClassName('mooc-lesson');
+			for (var i = 0; i < lessons.length; i++) {
+				if (lessons[i].getAttribute('data-mooc-id') == moocId) {
+					lessons[i].style.display = 'block';
+				} else {
+					lessons[i].style.display = 'none';
+				}
+			}
+		}
+	</script>
 
 </body>
 

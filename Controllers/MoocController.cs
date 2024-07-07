@@ -103,17 +103,23 @@ namespace FinalProject.Controllers
         {
             try
             {
-                var mooc = await _context.Moocs.FindAsync(id);
-                if (mooc == null)
-                {
-                    return NotFound(new { message = "Mooc not found." });
-                }
+				var mooc = await _context.Moocs.Include(m => m.Lessons).FirstOrDefaultAsync(m => m.Id == id);
+				if (mooc == null)
+				{
+					return NotFound(new { message = "Mooc not found." });
+				}
 
-                _context.Moocs.Remove(mooc);
-                await _context.SaveChangesAsync();
+				
+				if (mooc.Lessons != null && mooc.Lessons.Any())
+				{
+					_context.Lessons.RemoveRange(mooc.Lessons);
+				}
 
-                return Ok(new { message = "Mooc deleted successfully" });
-            }
+				_context.Moocs.Remove(mooc);
+				await _context.SaveChangesAsync();
+
+				return Ok(new { message = "Mooc and associated lessons deleted successfully" });
+			}
             catch (Exception ex)
             {
                 return StatusCode(500, new { message = "An error occurred while deleting the mooc.", error = ex.Message });

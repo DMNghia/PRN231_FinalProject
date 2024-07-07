@@ -1,4 +1,4 @@
-using System.Net.Http;
+﻿using System.Net.Http;
 using FinalProject.Constants;
 using FinalProject.Dto;
 using Microsoft.AspNetCore.Mvc;
@@ -147,9 +147,26 @@ namespace FinalProject.Pages
                         ModelState.AddModelError(string.Empty, $"Failed to delete Lesson. Error message: {errorMessage}");
                     }
                 }
+                //else if (Request.Form.TryGetValue("SubmitDeleteMooc", out var submitDeleteMoocValue) && submitDeleteMoocValue == "SubmitDeleteMooc")
+                //{
+                //    int moocId = int.Parse(Request.Form["MoocId"]);
 
+                //    var response = await _httpClient.DeleteAsync($"https://localhost:5000/api/Mooc/DeleteMooc/{moocId}");
+                //    if (response.IsSuccessStatusCode)
+                //    {
+                //        return RedirectToPage("/Course-Detail");
+                //    }
+                //    else
+                //    {
+                //        var errorMessage = await response.Content.ReadAsStringAsync();
+                //        ModelState.AddModelError(string.Empty, $"Failed to delete Mooc. Error message: {errorMessage}");
+                //    }
+                //}
 
                 return Page();
+
+
+
             }
             catch (Exception ex)
             {
@@ -158,9 +175,37 @@ namespace FinalProject.Pages
             }
         }
 
+		public async Task<IActionResult> OnPostDeleteMoocAsync(int moocId)
+		{
+			if (ModelState.IsValid)
+			{
+				try
+				{
+					HttpClient _httpClient = new HttpClient();
+
+					var response = await _httpClient.DeleteAsync($"https://localhost:5000/api/Mooc/DeleteMooc/{moocId}");
+					if (response.IsSuccessStatusCode)
+					{
+						return RedirectToPage("/Course-Detail");
+					}
+					else
+					{
+						var errorMessage = await response.Content.ReadAsStringAsync();
+						ModelState.AddModelError(string.Empty, $"Failed to delete Mooc. Error message: {errorMessage}");
+					}
+				}
+				catch (Exception ex)
+				{
+					ModelState.AddModelError(string.Empty, $"An error occurred: {ex.Message}");
+				}
+			}
+
+			// Trả về trang hiện tại với thông tin lỗi nếu có
+			return Page();
+		}
 
 
+	}
 
-    }
 }
  
