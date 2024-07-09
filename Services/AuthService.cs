@@ -3,6 +3,7 @@ using FinalProject.Dto;
 using FinalProject.Dto.Response;
 using FinalProject.Models;
 using Microsoft.IdentityModel.Tokens;
+using System.Security.Claims;
 using System.Text.Json;
 
 namespace FinalProject.Services
@@ -83,17 +84,46 @@ namespace FinalProject.Services
 
         public static void SetPrinciple(HttpContext context, UserLoginPrinciple principle)
         {
+            ClaimsIdentity claimsIdentity = new ClaimsIdentity(TypeAuthentication.LOCAL.ToString(), "PRINCIPLE", principle.Role);
+            claimsIdentity.AddClaims(new List<Claim>
+                    {
+                        new Claim(ClaimTypes.Name, principle.FullName),
+                        new Claim(ClaimTypes.Email, principle.Email),
+                        new Claim(ClaimTypes.AuthenticationMethod, principle.TypeAuthentication),
+                        new Claim("id", principle.Id.ToString()),
+                        new Claim(ClaimTypes.Role,  principle.Role),
+                        new Claim("isActive", principle.IsActive.ToString())
+                    });
+            context.User = new ClaimsPrincipal(claimsIdentity);
             context.Session.SetString("principle", JsonSerializer.Serialize(principle));
         }
 
-        public static UserLoginPrinciple? GetPrinciple(HttpContext context)
+        public static UserLoginPrinciple? GetPrinciple(HttpContext HttpContext)
         {
-            string? principle_raw = context.Session.GetString("principle");
-            if (principle_raw.IsNullOrEmpty())
+            try
+            {
+                if (HttpContext.User.Claims.FirstOrDefault(c => c.Type.Equals("id")) == null)
+                {
+                    if (HttpContext.Session.GetString("principle").IsNullOrEmpty())
+                    {
+                        return null;
+                    }
+                    return JsonSerializer.Deserialize<UserLoginPrinciple>(HttpContext.Session.GetString("principle"));
+                }
+                return new UserLoginPrinciple
+                {
+                    Id = int.Parse(HttpContext.User.Claims.FirstOrDefault(c => c.Type.Equals("id")).Value),
+                    FullName = HttpContext.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Name)).Value,
+                    Email = HttpContext.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Email)).Value,
+                    IsActive = bool.Parse(HttpContext.User.Claims.FirstOrDefault(c => c.Type.Equals("isActive")).Value),
+                    Role = HttpContext.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.Role)).Value,
+                    TypeAuthentication = HttpContext.User.Claims.FirstOrDefault(c => c.Type.Equals(ClaimTypes.AuthenticationMethod)).Value
+                };
+            } catch (Exception ex)
             {
                 return null;
             }
-            return JsonSerializer.Deserialize<UserLoginPrinciple>(principle_raw);
+            
         }
     }
 }

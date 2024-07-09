@@ -34,7 +34,6 @@ namespace FinalProject.Security
                 string path = context.HttpContext.Request.Path;
                 if (!isIgnoreUrl(path))
                 {
-                    
                     string? jwtToken = GetTokenFromRequest(context.HttpContext.Request);
                     if (jwtToken.IsNullOrEmpty())
                     {
