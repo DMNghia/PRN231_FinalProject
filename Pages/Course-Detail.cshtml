@@ -2,6 +2,8 @@
 @model FinalProject.Pages.Course_DetailModel
 @{
     Layout = null;
+    var errorMessage = TempData["ErrorMessage"] as string;
+    var successMessage = TempData["SuccessMessage"] as string;
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -28,6 +30,7 @@
     <link href="assets/vendor/aos/aos.css" rel="stylesheet">
     <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
     <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/notification.css">
 
     <!-- Main CSS File -->
     <link href="assets/css/main.css" rel="stylesheet">
@@ -85,7 +88,7 @@
             </nav>
 
             <a class="btn-getstarted" href="courses.html">Get Started</a>
-
+            <div id="notification-area"></div>
         </div>
     </header>
 
@@ -339,7 +342,23 @@
 
     <!-- Main JS File -->
     <script src="./assets/js/main.js"></script>
-
+    <script src="/assets/js/notification.js"></script>
+    @if (errorMessage != null)
+    {
+        <script>
+            window.onload = () => {
+                notify('danger', '@errorMessage');
+            };
+        </script>
+    }
+    @if (successMessage != null)
+    {
+        <script>
+            window.onload = () => {
+                notify('success', '@successMessage');
+            };
+        </script>
+    }
 </body>
 
 </html>

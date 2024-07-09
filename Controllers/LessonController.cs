@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MimeKit.Tnef;
+using FinalProject.Dto.Response;
+using FinalProject.Constants;
 
 namespace FinalProject.Controllers
 {
@@ -193,7 +195,11 @@ namespace FinalProject.Controllers
                 _context.Lessons.Update(lesson);
                 await _context.SaveChangesAsync();
 
-                return Ok(new { message = "Lesson updated successfully", lessonId = lesson.Id });
+                return Ok(new BaseResponse<object>
+                {
+                    code = ResponseCode.ERROR.GetHashCode(),
+                    message = "Thanh cong"
+                });
             }
             catch (Exception ex)
             {

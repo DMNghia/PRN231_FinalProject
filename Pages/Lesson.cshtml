@@ -10,6 +10,8 @@
 	var moocs = ViewData["moocs"] as List<MoocDTO>;
 	var hrefKhoaHoc = ViewData["hrefKhoaHoc"] as string;
 	UserLoginPrinciple? principle = AuthService.GetPrinciple(HttpContext);
+	var errorMessage = TempData["ErrorMessage"] as string;
+	var successMessage = TempData["SuccessMessage"] as string;
 	//bool isTeacher = false;
 	//UserLoginPrinciple? principle = HttpContext.Items["principle"] as UserLoginPrinciple;
 	//if (principle != null && principle.Role == RoleName.TEACHER.ToString())
@@ -43,6 +45,7 @@
 	<link href="/assets/vendor/aos/aos.css" rel="stylesheet">
 	<link href="/assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
 	<link href="/assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="/assets/css/notification.css">
 
 	<!-- Main CS/S File -->
 	<link href="/assets/css/main.css" rel="stylesheet">
@@ -158,12 +161,11 @@
 			}
 	</style>
 </head>
-
 <body class="course-details-page">
 	@*<h1>@principle.FullName</h1>*@
 	<div id="popup">
 		<form action="" method="post" id="addLesson">
-
+			<input type="hidden" name="courseHref" value="@ViewData["hrefKhoaHoc"]" />
 			<div class="wave-group">
 				<input type="text" class="input" id="lessonName" name="LessonName"
 					   style="margin-top: 20px;width: 80%" required>
@@ -283,6 +285,7 @@
 		<form method="post" id="editLesson">
 			<input type="hidden" name="LessonId" value="@lesson?.Id" />
 			<input type="hidden" name="OldHref" value="@lesson?.Href" />
+			<input type="hidden" name="courseHref" value="@ViewData["hrefKhoaHoc"]" />
 			<div class="wave-group">
 				<input type="text" class="input" id="editLessonName" name="LessonName" value="@lesson?.Name"
 					   style="margin-top: 20px;width: 80%" required>
@@ -350,7 +353,7 @@
 						style="padding: 10px;cursor: pointer;border-radius: 7px;border: 1px solid #5c636a;margin-right: 20px;">
 					Cập nhật Bài học
 				</button>
-				<button type="submit" onclick="confirmDelete()"
+				<button type="button" onclick="confirmDelete()"
 						style="padding: 10px;cursor: pointer;border-radius: 7px;border: 1px solid #5c636a; background-color: red; color: white;">
 					Xóa Bài học
 				</button>
@@ -412,7 +415,7 @@
 
 				<a class="btn-getstarted" href="@(principle != null ? "/" : "/dang-nhap")">@(principle?.FullName != null ? principle.FullName : "Đăng nhập")</a>
 
-
+				<div id="notification-area"></div>
 			</div>
 		</header>
 
@@ -539,11 +542,11 @@
 											@if (principle != null && principle.Role == RoleName.TEACHER.ToString())
 											{
 												<form method="post" asp-page-handler="DeleteMooc" id="deleteMooc-@mooc.Id" style="display:inline;" onsubmit="return confirmDeleteMooc(@mooc.Id)">
-												<input type="hidden" name="MoocId" value="@mooc.Id" />
-												<button type="submit" class="btn btn-danger btn-sm" name="SubmitDeleteMooc" value="SubmitDeleteMooc" style="margin-left: 10px;">Xóa</button>
-											</form>
+													<input type="hidden" name="MoocId" value="@mooc.Id" />
+													<button type="submit" class="btn btn-danger btn-sm" name="SubmitDeleteMooc" value="SubmitDeleteMooc" style="margin-left: 10px;">Xóa</button>
+												</form>
 											}
-											
+
 										</li>
 									}
 
@@ -569,25 +572,25 @@
 								<div class="tab-pane active show" id="tab-1">
 									<div class="row">
 										<div class="col-lg-8 details order-2 order-lg-1">
-											
-												<h3>Tên bài: @lesson?.Name</h3>
-												<p> Mô tả: @lesson?.Description</p>
-												<p>
-													@if (lesson != null)
+
+											<h3>Tên bài: @lesson?.Name</h3>
+											<p> Mô tả: @lesson?.Description</p>
+											<p>
+												@if (lesson != null)
+												{
+													var lessonMooc = moocs?.FirstOrDefault(m => m.Id == lesson.MoocId);
+													if (lessonMooc != null)
 													{
-														var lessonMooc = moocs?.FirstOrDefault(m => m.Id == lesson.MoocId);
-														if (lessonMooc != null)
-														{
-															<p>Mooc: @lessonMooc.Name</p>
-														}
-														else
-														{
-															<p>No Mooc associated with this lesson.</p>
-														}
+													<p>Mooc: @lessonMooc.Name</p>
 													}
-												</p>
-												<p>Ngày tạo: @lesson?.CreateAt.Value.ToString("dd/MM/yyyy")</p>
-											
+													else
+													{
+													<p>No Mooc associated with this lesson.</p>
+													}
+												}
+											</p>
+											<p>Ngày tạo: @lesson?.CreateAt.Value.ToString("dd/MM/yyyy")</p>
+
 
 										</div>
 										<div class="col-lg-4 text-center order-1 order-lg-2">
@@ -739,6 +742,7 @@
 				form.appendChild(input);
 				form.submit();
 			}
+
 		}
 
 		function confirmDeleteMooc(moocId) {
@@ -746,7 +750,7 @@
 				var form = document.getElementById('deleteMooc-' + moocId);
 				return true;
 			}
-			return false; 
+			return false;
 		}
 
 	</script>
@@ -762,7 +766,23 @@
 			}
 		}
 	</script>
-
+	<script src="/assets/js/notification.js"></script>
+	@if (errorMessage != null)
+	{
+		<script>
+			window.onload = () => {
+				notify('danger', '@errorMessage');
+			};
+		</script>
+	}
+	@if (successMessage != null)
+	{
+		<script>
+			window.onload = () => {
+				notify('success', '@successMessage');
+			};
+		</script>
+	}
 </body>
 
 </html>
