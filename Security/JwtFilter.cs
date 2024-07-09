@@ -37,17 +37,12 @@ namespace FinalProject.Security
                     string? jwtToken = GetTokenFromRequest(context.HttpContext.Request);
                     if (jwtToken.IsNullOrEmpty())
                     {
-                        UserLoginPrinciple? loginPrinciple = AuthService.GetPrinciple(context.HttpContext);
-                        if (loginPrinciple == null)
+                        context.HttpContext.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                        context.Result = new JsonResult(new BaseResponse<object>
                         {
-                            context.HttpContext.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                            context.Result = new JsonResult(new BaseResponse<object>
-                            {
-                                code = ResponseCode.ERROR.GetHashCode(),
-                                message = "Vui lòng đăng nhập"
-                            });
-                            return;
-                        }
+                            code = ResponseCode.ERROR.GetHashCode(),
+                            message = "Vui lòng đăng nhập"
+                        });
                         return;
                     }
                     if (jwtService.CheckTokenExpired(jwtToken))
