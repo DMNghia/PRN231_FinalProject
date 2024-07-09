@@ -93,6 +93,10 @@
             </nav>
 
             <a class="btn-getstarted" href="@(principle != null ? "/" : "dang-nhap")">@(principle?.FullName != null ? principle.FullName : "Đăng nhập")</a>
+            @if (principle != null)
+            {
+                <a class="btn-getstarted" href="dang-nhap">Đăng xuất</a>
+            }
 
         </div>
     </header>
