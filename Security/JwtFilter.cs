@@ -34,12 +34,11 @@ namespace FinalProject.Security
                 string path = context.HttpContext.Request.Path;
                 if (!isIgnoreUrl(path))
                 {
-                    
                     string? jwtToken = GetTokenFromRequest(context.HttpContext.Request);
                     if (jwtToken.IsNullOrEmpty())
                     {
                         UserLoginPrinciple? loginPrinciple = AuthService.GetPrinciple(context.HttpContext);
-                        if (loginPrinciple != null)
+                        if (loginPrinciple == null)
                         {
                             context.HttpContext.Response.StatusCode = StatusCodes.Status401Unauthorized;
                             context.Result = new JsonResult(new BaseResponse<object>
