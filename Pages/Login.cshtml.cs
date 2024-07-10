@@ -54,11 +54,7 @@ namespace FinalProject.Pages
                 {
                     UserLoginPrinciple principle = JwtService.GetPrincipleFromToken(response.data.Token);
                     AuthService.SetPrinciple(HttpContext, principle);
-                    HttpContext.Response.Cookies.Append("jwt_token", response.data.Token,
-                        new CookieOptions
-                        {
-                            Expires = DateTime.Now.AddHours(2)
-                        });
+                    HttpContext.Session.SetString("jwt_token", response.data.Token);
                     return RedirectToPage("/Index");
                 } else
                 {
