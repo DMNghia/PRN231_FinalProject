@@ -26,10 +26,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="wwwroot\assets\css\login.css" />
     <None Include="wwwroot\assets\css\main.css" />
     <None Include="wwwroot\assets\css\sign-up.css" />

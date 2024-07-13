@@ -47,7 +47,16 @@ builder.Services.AddSession(options =>
 });
 
 // Add cors config
-builder.Services.AddCors();
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(
+        builder =>
+        {
+            builder.WithOrigins("http://localhost:5000", "http://localhost:5001")
+                   .AllowAnyHeader()
+                   .AllowAnyMethod();
+        });
+}); ;
 
 // Add Razor page config
 builder.Services.AddRazorPages();
@@ -75,8 +84,8 @@ app.UseSession();
 
 // Use cors
 app.UseCors(options => options.AllowAnyOrigin()
-	.AllowAnyHeader()
-	.AllowAnyMethod());
+    .AllowAnyHeader()
+    .AllowAnyMethod());
 
 //app.UseAuthentication();
 
