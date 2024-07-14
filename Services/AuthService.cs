@@ -95,7 +95,6 @@ namespace FinalProject.Services
                         new Claim("isActive", principle.IsActive.ToString())
                     });
             context.User = new ClaimsPrincipal(claimsIdentity);
-            context.Session.SetString("principle", JsonSerializer.Serialize(principle));
         }
 
         public static UserLoginPrinciple? GetPrinciple(HttpContext HttpContext)
@@ -104,11 +103,13 @@ namespace FinalProject.Services
             {
                 if (HttpContext.User.Claims.FirstOrDefault(c => c.Type.Equals("id")) == null)
                 {
-                    if (HttpContext.Session.GetString("principle").IsNullOrEmpty())
+                    string? token = HttpContext.Request.Cookies["jwt_token"];
+                    
+                    if (token.IsNullOrEmpty())
                     {
                         return null;
                     }
-                    return JsonSerializer.Deserialize<UserLoginPrinciple>(HttpContext.Session.GetString("principle"));
+                    return JwtService.GetPrincipleFromToken(token);
                 }
                 return new UserLoginPrinciple
                 {

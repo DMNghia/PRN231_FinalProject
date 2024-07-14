@@ -8,7 +8,7 @@
     // Cach lay thong tin nguoi dung
     UserLoginPrinciple? principle = AuthService.GetPrinciple(HttpContext);
     // Cach lay token
-    string? token = HttpContext.Session.GetString("jwt_token");
+    string? token = HttpContext.Request.Cookies["jwt_token"];
 }
 <!DOCTYPE html>
 <html lang="en">

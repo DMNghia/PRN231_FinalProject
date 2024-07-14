@@ -52,9 +52,7 @@ namespace FinalProject.Pages
                 var response = await responseMessage.Content.ReadFromJsonAsync<BaseResponse<SignInResponse>>();
                 if (response?.code == 0)
                 {
-                    UserLoginPrinciple principle = JwtService.GetPrincipleFromToken(response.data.Token);
-                    AuthService.SetPrinciple(HttpContext, principle);
-                    HttpContext.Session.SetString("jwt_token", response.data.Token);
+                    HttpContext.Response.Cookies.Append("jwt_token", response.data.Token);
                     return RedirectToPage("/Index");
                 } else
                 {
