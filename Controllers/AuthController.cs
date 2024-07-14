@@ -9,6 +9,7 @@ using FinalProject.Models;
 using Microsoft.EntityFrameworkCore;
 using FinalProject.Dto.Response;
 using System.Text.Json;
+using System.Security.Claims;
 
 namespace FinalProject.Controllers
 {
@@ -32,11 +33,25 @@ namespace FinalProject.Controllers
         [HttpGet("get-login")]
         public IActionResult GetLogin()
         {
-            return Ok(new BaseResponse<object>
+            try
             {
-                code = ResponseCode.SUCCESS.GetHashCode(),
-                message = "Thành công"
-            });
+                UserLoginPrinciple? principle = AuthService.GetPrinciple(HttpContext);
+                logger.LogInformation($"GET LOGIN >>> PRINCIPLE: {JsonSerializer.Serialize(principle)}");
+                return Ok(new BaseResponse<UserLoginPrinciple>
+                {
+                    code = ResponseCode.SUCCESS.GetHashCode(),
+                    message = "Thành công",
+                    data = principle
+                });
+            } catch (Exception ex)
+            {
+                logger.LogError($"GET LOGIN ERROR >>> {ex}");
+                return Ok(new BaseResponse<UserLoginPrinciple>
+                {
+                    code = ResponseCode.ERROR.GetHashCode(),
+                    message = "Có lỗi xảy ra"
+                });
+            }
         }
 
         [HttpPost("active-account/{tokenValue}")]

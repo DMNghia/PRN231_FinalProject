@@ -7,6 +7,8 @@
     Layout = null;
     // Cach lay thong tin nguoi dung
     UserLoginPrinciple? principle = AuthService.GetPrinciple(HttpContext);
+    // Cach lay token
+    string? token = HttpContext.Request.Cookies["jwt_token"];
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -93,6 +95,10 @@
             </nav>
 
             <a class="btn-getstarted" href="@(principle != null ? "/" : "dang-nhap")">@(principle?.FullName != null ? principle.FullName : "Đăng nhập")</a>
+            @if (principle != null)
+            {
+                <a class="btn-getstarted" href="dang-nhap">Đăng xuất</a>
+            }
 
         </div>
     </header>
@@ -588,7 +594,8 @@
     <script src="./assets/vendor/swiper/swiper-bundle.min.js"></script>
 
     <!-- Main JS File -->
-    <script src="./assets/js/main.js"></script>
+    <script src="/assets/js/main.js"></script>
+    <script src="/assets/js/utils.js"></script>
 
 </body>
 

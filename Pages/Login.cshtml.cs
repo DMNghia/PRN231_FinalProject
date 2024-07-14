@@ -21,6 +21,12 @@ namespace FinalProject.Pages
         public SignInRequest SignInRequest { get; set; }
         public void OnGet()
         {
+            if (AuthService.GetPrinciple(HttpContext) != null)
+            {
+                HttpContext.Session.Remove("principle");
+                HttpContext.User = new System.Security.Claims.ClaimsPrincipal();
+                HttpContext.Response.Cookies.Delete("jwt_token");
+            }
             ViewData["errorMessage"] = HttpContext.Session.GetString("errorMessage");
             ViewData["successMessage"] = HttpContext.Session.GetString("successMessage");
             if (ViewData["errorMessage"] != null)
@@ -46,7 +52,7 @@ namespace FinalProject.Pages
                 var response = await responseMessage.Content.ReadFromJsonAsync<BaseResponse<SignInResponse>>();
                 if (response?.code == 0)
                 {
-                    AuthService.SetPrinciple(HttpContext, JwtService.GetPrincipleFromToken(response.data.Token));
+                    HttpContext.Response.Cookies.Append("jwt_token", response.data.Token);
                     return RedirectToPage("/Index");
                 } else
                 {
