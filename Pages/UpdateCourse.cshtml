@@ -1,0 +1,72 @@
+﻿@page
+@model FinalProject.Pages.UpdateCourseModel
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Update Course</title>
+    <!-- Include necessary CSS and JS -->
+</head>
+<body>
+    <h1>Update Course</h1>
+
+    @if (Model != null && Model.Course != null)
+    {
+        <form id="updateCourseForm">
+            <!-- Update form fields here -->
+            <input type="hidden" id="courseId" name="courseId" value="@Model.Course.Id" />
+            <input type="text" id="name" name="name" value="@Model.Course.Name" />
+            <input type="text" id="description" name="description" value="@Model.Course.Description" />
+            <input type="text" id="image" name="image" value="@Model.Course.Image" /> <!-- Thêm trường image -->
+            <input type="text" id="href" name="href" value="@Model.Course.Href" /> <!-- Thêm trường href -->
+            <!-- Other fields -->
+            @* <select id="categoryName" name="categoryName">
+                @foreach (var category in Model.Categories)
+                {
+                    <option value="@category.Name">@category.Name</option>
+                }
+            </select> *@
+            <button type="button" onclick="updateCourse()">Save Changes</button>
+        </form>
+    }
+    else
+    {
+        <p>Course not found or Model not initialized.</p>
+    }
+
+    <script>
+        async function updateCourse() {
+            const courseId = document.getElementById('courseId').value;
+            const name = document.getElementById('name').value;
+            const description = document.getElementById('description').value;
+            const image = document.getElementById('image').value;
+            const href = document.getElementById('href').value;
+            const categoryName = document.getElementById('categoryName').value; // Bổ sung trường này
+
+            try {
+                const response = await fetch(`/api/Course/updateCourse/${courseId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name: name,
+                        description: description,
+                        image: image,
+                        href: href,
+                        categoryName: categoryName  // Bổ sung trường này
+                    })
+                });
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                alert('Course updated successfully!');
+                // Xử lý chuyển hướng hoặc cập nhật giao diện sau khi cập nhật
+            } catch (error) {
+                console.error('Error updating course:', error);
+                alert('Failed to update course. Please try again later.');
+            }
+        }
+    </script>
+</body>
+</html>

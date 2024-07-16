@@ -1,4 +1,5 @@
-﻿@page
+﻿@* "/Khoa-hoc/{href}" *@
+@page 
 @model FinalProject.Pages.Course_DetailModel
 @{
     Layout = null;
@@ -114,46 +115,15 @@
         </div><!-- End Page Title -->
         <!-- Courses Course Details Section -->
         <section id="courses-course-details" class="courses-course-details section">
-
             <div class="container" data-aos="fade-up">
-
                 <div class="row">
                     <div class="col-lg-8">
-                        <img src="./assets/img/course-details.jpg" class="img-fluid" alt="">
-                        <h3>Et enim incidunt fuga tempora</h3>
-                        <p>
-                            Qui et explicabo voluptatem et ab qui vero et voluptas. Sint voluptates temporibus quam autem. Atque nostrum voluptatum laudantium a doloremque enim et ut dicta. Nostrum ducimus est iure minima totam doloribus nisi ullam deserunt. Corporis aut officiis sit nihil est. Labore aut sapiente aperiam.
-                            Qui voluptas qui vero ipsum ea voluptatem. Omnis et est. Voluptatem officia voluptatem adipisci et iusto provident doloremque consequatur. Quia et porro est. Et qui corrupti laudantium ipsa.
-                            Eum quasi saepe aperiam qui delectus quaerat in. Vitae mollitia ipsa quam. Ipsa aut qui numquam eum iste est dolorum. Rem voluptas ut sit ut.
-                        </p>
-                    </div>
-                    <div class="col-lg-4">
-
-                        <div class="course-info d-flex justify-content-between align-items-center">
-                            <h5>Trainer</h5>
-                            <p><a href="#">Walter White</a></p>
+                        <div id="courseDetails">
+                            <!-- Course details will be loaded here dynamically -->
                         </div>
-
-                        <div class="course-info d-flex justify-content-between align-items-center">
-                            <h5>Course Fee</h5>
-                            <p>$165</p>
-                        </div>
-
-                        <div class="course-info d-flex justify-content-between align-items-center">
-                            <h5>Available Seats</h5>
-                            <p>30</p>
-                        </div>
-
-                        <div class="course-info d-flex justify-content-between align-items-center">
-                            <h5>Schedule</h5>
-                            <p>5.00 pm - 7.00 pm</p>
-                        </div>
-
                     </div>
                 </div>
-
             </div>
-
         </section><!-- /Courses Course Details Section -->
         <!-- Tabs Section -->
         <section id="tabs" class="tabs section">
@@ -249,8 +219,26 @@
             </div>
 
         </section><!-- /Tabs Section -->
-
     </main>
+
+    <script>
+        // JavaScript to fetch and display course details
+        document.addEventListener('DOMContentLoaded', function () {
+            // Fetch course details from API
+            fetch('/api/Course/detail/@ViewData["id"]')
+                .then(response => response.json())
+                .then(data => {
+                    // Update the course details section
+                    document.getElementById('courseDetails').innerHTML = `
+                            <img src="${data.image}" class="img-fluid" alt="${data.name}">
+                            <h3>${data.name}</h3>
+                            <p>${data.description}</p>
+                            <!-- Add more fields as needed -->
+                        `;
+                })
+                .catch(error => console.error('Error fetching course details:', error));
+        });
+    </script>
 
     <footer id="footer" class="footer position-relative">
 

@@ -1,0 +1,84 @@
+﻿@page
+@model FinalProject.Pages.AddCourseModel
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Add Course</title>
+    <link href="/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="container mt-5">
+        <h1>Add Course</h1>
+        <form id="add-course-form">
+            <div class="mb-3">
+                <label for="name" class="form-label">Course Name</label>
+                <input type="text" class="form-control" id="name" required>
+            </div>
+            <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <textarea class="form-control" id="description" required></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="image" class="form-label">Image URL</label>
+                <input type="url" class="form-control" id="image" required>
+            </div>
+            <div class="mb-3">
+                <label for="href" class="form-label">Course URL</label>
+                <input type="text" class="form-control" id="href" required>
+            </div>
+            <div class="mb-3">
+                <label for="categoryName" class="form-label">Category Name</label>
+                <input type="text" class="form-control" id="categoryName" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Add Course</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('add-course-form').addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            const courseData = {
+                name: document.getElementById('name').value,
+                description: document.getElementById('description').value,
+                image: document.getElementById('image').value,
+                href: document.getElementById('href').value,
+                categoryName: document.getElementById('categoryName').value
+            };
+
+            console.log('Course Data:', courseData); // Log dữ liệu để kiểm tra
+
+            try {
+                const response = await fetch('/api/Course/addCourse', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(courseData)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const newCourse = await response.json();
+                alert('Course added successfully!');
+
+                // Redirect to the courses page
+                window.location.href = '/Course';
+            } catch (error) {
+                console.error('Error adding course:', error);
+                alert('Could not add course. Please try again.');
+            }
+        });
+    </script>
+
+</body>
+
+</html>
