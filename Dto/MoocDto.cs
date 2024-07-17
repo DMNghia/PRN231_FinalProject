@@ -1,9 +1,15 @@
-﻿namespace FinalProject.Dto
+﻿using FinalProject.Models;
+
+namespace FinalProject.Dto
 {
-    public class MoocDto
+    public class MoocDTO
     {
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public List<LessonDto> Lessons { get; set; }
+        public int Id { get; set; }
+        public string? Name { get; set; }
+        public string? Description { get; set; }
+        public int? CourseId { get; set; }
+
+
+        public List<LessonDTO> Lessons { get; set; }
     }
 }

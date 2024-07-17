@@ -10,6 +10,6 @@ namespace FinalProject.Dto
         public int? CourseId { get; set; }
 
 
-        //public List<LessonDTO> Lessons { get; set; } = new();
+        public List<LessonDTO> Lessons { get; set; }
     }
 }

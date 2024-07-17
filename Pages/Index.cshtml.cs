@@ -40,8 +40,8 @@ namespace FinalProject.Pages
             UserLoginPrinciple? principle = AuthService.GetPrinciple(HttpContext);
             if (principle != null)
             {
-                response = await client.SendAsync(new HttpRequestMessage(HttpMethod.Get, "https://localhost:5000/api/User/enrolledCourses"));
-                ViewData["enrolledCourses"] = (await response.Content.ReadFromJsonAsync<BaseResponse<List<GetAllCourseResponse>>>()).data;
+                //response = await client.SendAsync(new HttpRequestMessage(HttpMethod.Get, "https://localhost:5000/api/User/enrolledCourses"));
+                //ViewData["enrolledCourses"] = (await response.Content.ReadFromJsonAsync<BaseResponse<List<GetAllCourseResponse>>>()).data;
             }
         }
     }
