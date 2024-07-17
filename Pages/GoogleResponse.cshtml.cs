@@ -31,7 +31,10 @@ namespace FinalProject.Pages
             string email = Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Email).Value;
             string name = Claims.FirstOrDefault(claim => claim.Type == ClaimTypes.Name).Value;
             BaseResponse<SignInResponse> response = await authService.LoginWithGoogle(email, name, HttpContext);
-            HttpContext.Response.Cookies.Append("jwt_token", response.data.ToString());
+            HttpContext.Response.Cookies.Append("jwt_token", response.data.Token, new CookieOptions
+            {
+                Expires = DateTime.Now.AddDays(7)
+            });
             AuthService.SetPrinciple(HttpContext, JwtService.GetPrincipleFromToken(response.data.Token));
             return RedirectToPage("/Index");
         }

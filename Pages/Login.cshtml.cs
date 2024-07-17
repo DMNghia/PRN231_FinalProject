@@ -52,7 +52,10 @@ namespace FinalProject.Pages
                 var response = await responseMessage.Content.ReadFromJsonAsync<BaseResponse<SignInResponse>>();
                 if (response?.code == 0)
                 {
-                    HttpContext.Response.Cookies.Append("jwt_token", response.data.Token);
+                    HttpContext.Response.Cookies.Append("jwt_token", response.data.Token, new CookieOptions
+                    {
+                        Expires = DateTime.Now.AddDays(7)
+                    });
                     return RedirectToPage("/Index");
                 } else
                 {

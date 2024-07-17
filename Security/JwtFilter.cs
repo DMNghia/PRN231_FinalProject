@@ -17,9 +17,8 @@ namespace FinalProject.Security
         private readonly JwtService jwtService;
         private readonly ILogger<JwtFilter> logger;
 
-        private readonly string[] WHITE_LIST_URL = new string[] { "/api/auth/sign-in", "/api/auth/sign-up", "/api/auth/active-account/*" };
-        private readonly string[] FRONT_END_URL = new string[] { "/dang-nhap", "/", "/dang-ky", "/dang-nhap-voi-google", "/google-response", "/kich-hoat-tai-khoan", "/Pricing", "/About", "/Course", "/Course-Detail", "/Event", "/Starter-Page", "/Trainers", "/Contact" };
-        private readonly string[] TEACHER_ROLE_URL = new string[] { };
+        private readonly string[] AUTHEN_LIST_URL = new string[] { "/api/auth/get-login"};
+        private readonly string[] TEACHER_ROLE_URL = new string[] { "/api/Course/teacher-created", "/api/category/Add" };
 
         public JwtFilter(JwtService jwtService, ILogger<JwtFilter> logger)
         {
@@ -32,7 +31,7 @@ namespace FinalProject.Security
             try
             {
                 string path = context.HttpContext.Request.Path;
-                if (!isIgnoreUrl(path))
+                if (isAuthenNeeded(path))
                 {
                     string? jwtToken = GetTokenFromRequest(context.HttpContext.Request);
                     if (jwtToken.IsNullOrEmpty())
@@ -58,6 +57,7 @@ namespace FinalProject.Security
                     UserLoginPrinciple principle = JwtService.GetPrincipleFromToken(jwtToken);
                     if (isTeacherRoleUrl(path) && principle.Role != RoleName.TEACHER.ToString())
                     {
+                        context.HttpContext.Response.StatusCode = StatusCodes.Status401Unauthorized;
                         context.Result = new JsonResult(new BaseResponse<object>
                         {
                             code = ResponseCode.ERROR.GetHashCode(),
@@ -80,10 +80,10 @@ namespace FinalProject.Security
             }
         }
 
-        private bool isTeacherRoleUrl(string path)
+        private bool isAuthenNeeded(string path)
         {
             path = path.ToLower();
-            foreach (string url in TEACHER_ROLE_URL)
+            foreach (string url in AUTHEN_LIST_URL)
             {
                 string lowerUrl = url.ToLower();
                 if (lowerUrl.EndsWith("/*"))
@@ -105,35 +105,16 @@ namespace FinalProject.Security
             return false;
         }
 
-        private bool isIgnoreUrl(string path)
+        private bool isTeacherRoleUrl(string path)
         {
             path = path.ToLower();
-            foreach (string url in WHITE_LIST_URL)
+            foreach (string url in TEACHER_ROLE_URL)
             {
                 string lowerUrl = url.ToLower();
                 if (lowerUrl.EndsWith("/*"))
                 {
                     string startWithUrl = lowerUrl.Substring(0, lowerUrl.Length - 2);
                     if (path.StartsWith(startWithUrl))
-                    {
-                        return true;
-                    }
-                }
-                else
-                {
-                    if (lowerUrl == path)
-                    {
-                        return true;
-                    }
-                }
-            }
-
-            foreach (string url in FRONT_END_URL)
-            {
-                string lowerUrl = url.ToLower();
-                if (lowerUrl.EndsWith("/*"))
-                {
-                    if (path.StartsWith(lowerUrl.Substring(lowerUrl.Length - 2, lowerUrl.Length)))
                     {
                         return true;
                     }
