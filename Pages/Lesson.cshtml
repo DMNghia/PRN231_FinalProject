@@ -2,12 +2,14 @@
 @using FinalProject.Dto;
 @using FinalProject.Constants
 @using FinalProject.Services
+@using FinalProject.Dto.Response
 @model FinalProject.Pages.LessonModel
 @{
 	Layout = null;
 	var lesson = ViewData["lesson"] as LessonDTO;
 	var lessons = ViewData["lessons"] as List<LessonDTO>;
 	var moocs = ViewData["moocs"] as List<MoocDTO>;
+	List<GetCategoryResponse> categories = ViewData["categories"] as List<GetCategoryResponse>;
 	var hrefKhoaHoc = ViewData["hrefKhoaHoc"] as string;
 	UserLoginPrinciple? principle = AuthService.GetPrinciple(HttpContext);
 	var errorMessage = TempData["ErrorMessage"] as string;
@@ -17,7 +19,7 @@
 	//if (principle != null && principle.Role == RoleName.TEACHER.ToString())
 	//{
 	//    isTeacher = true;
-	//}
+			//}
 
 }
 <!DOCTYPE html>
@@ -58,7 +60,7 @@
 	* License: https://bootstrapmade.com/license/
 	======================================================== -->
 	<style>
-		#popup, #popup1, #popupEdit {
+		#popup, #popup1, #popupEdit, #popupAddCategory {
 			position: fixed;
 			top: 30%;
 			left: 50%;
@@ -75,7 +77,7 @@
 			border-radius: 10px;
 		}
 
-			#popup.active, #popup1.active, #popupEdit.active {
+			#popup.active, #popup1.active, #popupEdit.active, #popupAddCategory.active {
 				top: 50%;
 				visibility: visible;
 				opacity: 1;
@@ -161,10 +163,47 @@
 			}
 	</style>
 </head>
+<div id="popupAddCategory">
+	<form method="post" asp-page-handler="AddCategory">
+		<div class="wave-group">
+			<input type="text" class="input" id="detailName" name="Name" style="margin-top: 20px; width: 80%" required>
+			<span class="bar"></span>
+			<label class="label">
+				<span class="label-char" style="--index: 0">T</span>
+				<span class="label-char" style="--index: 1">ê</span>
+				<span class="label-char" style="--index: 2">n</span>
+
+			</label>
+		</div>
+
+		<div class="wave-group" style="margin-top: 20px;">
+			<label>Mô Tả Phân Loại:</label><br>
+			<textarea rows="10" cols="25" name="Description" style="width: 80%; font-size: 16px;" placeholder="Paste here..." required></textarea>
+		</div>
+
+		<div class="wave-group">
+			<input type="text" class="input" id="detailCategoryHref" name="Href" style="margin-top: 20px; width: 80%" required>
+			<span class="bar"></span>
+			<label class="label">
+				<span class="label-char" style="--index: 0">H</span>
+				<span class="label-char" style="--index: 1">r</span>
+				<span class="label-char" style="--index: 2">e</span>
+				<span class="label-char" style="--index: 3">f</span>
+
+			</label>
+		</div>
+
+		<div style="margin-top: 20px;">
+			<button type="submit" name="SubmitAddCategory" value="SubmitAddCategory" style="padding: 10px; cursor: pointer; border-radius: 7px; border: 1px solid #5c636a; margin-right: 20px;">Tạo mới phân loại</button>
+			<button type="button" onclick="toggleAddCategory()" style="padding: 10px; cursor: pointer; border-radius: 7px; border: 1px solid #5c636a;">Đóng</button>
+		</div>
+	</form>
+</div>
 <body class="course-details-page">
-	@*<h1>@principle.FullName</h1>*@
+
+
 	<div id="popup">
-		<form action="" method="post" id="addLesson">
+		<form method="post" id="addLesson">
 			<input type="hidden" name="courseHref" value="@ViewData["hrefKhoaHoc"]" />
 			<div class="wave-group">
 				<input type="text" class="input" id="lessonName" name="LessonName"
@@ -374,48 +413,47 @@
 		<header id="header" class="header d-flex align-items-center sticky-top">
 			<div class="container-fluid container-xl position-relative d-flex align-items-center">
 
-				<a href="index.html" class="logo d-flex align-items-center me-auto">
+				<a href="/" class="logo d-flex align-items-center me-auto">
 					<!-- Uncomment the line below if you also wish to use an image logo -->
-					<!-- <img src="/assets/img/logo.png" alt=""> -->
-					<h1 class="sitename">Free Course</h1>
+					<!-- <img src="./assets/img/logo.png" alt=""> -->
+					<h1 class="sitename">Free course</h1>
 				</a>
 
 				<nav id="navmenu" class="navmenu">
 					<ul>
-						<li><a href="Index">Home<br></a></li>
-						@*                    <li><a href="about.html">About</a></li>
-						*@
-						<li><a href="Course">Courses</a></li>
-						@*<li><a href="trainers.html">Trainers</a></li>*@
-						@*<li><a href="events.html">Events</a></li>*@
-						@*<li><a href="pricing.html">Pricing</a></li>*@
+						<li><a href="/" class="active">Trang chủ<br></a></li>
+						<li><a href="/khoa-hoc">Khóa học</a></li>
+						<li><a href="trainers.html">Giáo viên</a></li>
 						<li class="dropdown">
-							<a href="#"><span>Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+							<a href="#"><span>Phân loại</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
 							<ul>
-								<li><a href="#">Dropdown 1</a></li>
-								<li class="dropdown">
-									<a href="#"><span>Deep Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-									<ul>
-										<li><a href="#">Deep Dropdown 1</a></li>
-										<li><a href="#">Deep Dropdown 2</a></li>
-										<li><a href="#">Deep Dropdown 3</a></li>
-										<li><a href="#">Deep Dropdown 4</a></li>
-										<li><a href="#">Deep Dropdown 5</a></li>
-									</ul>
-								</li>
-								<li><a href="#">Dropdown 2</a></li>
-								<li><a href="#">Dropdown 3</a></li>
-								<li><a href="#">Dropdown 4</a></li>
+								@if (principle != null && principle.Role == RoleName.TEACHER.ToString())
+								{
+
+									<li><a onclick="toggleAddCategory()">Thêm mới</a></li>
+
+								}
+								@foreach (GetCategoryResponse category in categories)
+								{
+									<li><a href="/khoa-hoc?category=@category.Href">@category.Name</a></li>
+								}
+
 							</ul>
+
 						</li>
-						<li><a href="contact.html">Contact</a></li>
+
+
+
 					</ul>
 					<i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
 				</nav>
 
-				<a class="btn-getstarted" href="@(principle != null ? "/" : "/dang-nhap")">@(principle?.FullName != null ? principle.FullName : "Đăng nhập")</a>
+				<a class="btn-getstarted" href="@(principle != null ? "/" : "dang-nhap")">@(principle?.FullName != null ? principle.FullName : "Đăng nhập")</a>
+				@if (principle != null)
+				{
+					<a class="btn-getstarted" href="dang-nhap">Đăng xuất</a>
+				}
 
-				<div id="notification-area"></div>
 			</div>
 		</header>
 
@@ -723,6 +761,15 @@
 			var popup = document.getElementById('popup');
 			popup.classList.toggle('active');
 		}
+
+
+		function toggleAddCategory() {
+			var blur = document.getElementById('blur');
+			blur.classList.toggle('active');
+			var popup = document.getElementById('popupAddCategory');
+			popup.classList.toggle('active');
+		}
+
 
 		function toggleEdit() {
 			var blur = document.getElementById('blur');

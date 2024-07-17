@@ -13,7 +13,7 @@ namespace FinalProject.Pages
 {
     public class LessonModel : PageModel
     {
-        public void OnGet(string hrefKhoaHoc, string? hrefBaiHoc)
+        public async Task OnGet(string hrefKhoaHoc, string? hrefBaiHoc)
         {
             HttpClient _httpClient = new HttpClient();
 
@@ -24,7 +24,13 @@ namespace FinalProject.Pages
             var lessons = response1.Content.ReadFromJsonAsync<List<LessonDTO>>().Result;
             HttpResponseMessage response2 = _httpClient.GetAsync($"https://localhost:5000/api/Mooc/GetMoocs").Result;
             var moocs = response2.Content.ReadFromJsonAsync<List<MoocDTO>>().Result;
-            ViewData["lesson"] = lesson;
+
+			HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, "https://localhost:5000/api/Category");
+			HttpResponseMessage response3 = await _httpClient.SendAsync(requestMessage);
+			BaseResponse<List<GetCategoryResponse>> responseGetAllCategories = await response3.Content.ReadFromJsonAsync<BaseResponse<List<GetCategoryResponse>>>();
+			ViewData["categories"] = responseGetAllCategories.data;
+
+			ViewData["lesson"] = lesson;
             ViewData["lessons"] = lessons;
             ViewData["hrefKhoaHoc"] = hrefKhoaHoc;
             ViewData["moocs"] = moocs;
@@ -238,9 +244,50 @@ namespace FinalProject.Pages
             return Page();
         }
 
+		public async Task<IActionResult> OnPostAddCategory()
+		{
+			HttpClient _httpClient = new HttpClient();
+
+			try
+			{
+				if (Request.Form.TryGetValue("SubmitAddCategory", out var submitMoocValue) && submitMoocValue == "SubmitAddCategory")
+				{
+					var categoryDTO = new CategoryDto
+					{
+						Name = Request.Form["Name"],
+						Description = Request.Form["Description"],
+						Href = Request.Form["Href"],
+
+					};
+					var contentBody = new StringContent(JsonSerializer.Serialize(categoryDTO), null, "application/json");
+					var request = new HttpRequestMessage(HttpMethod.Post, $"https://localhost:5000/api/Category/Add");
+					request.Content = contentBody;
+					string? jwtToken = HttpContext.Request.Cookies["jwt_token"];
+					request.Headers.Add("Authorization", $"Bearer {jwtToken}");
+					var response = await _httpClient.SendAsync(request);
+					if (response.IsSuccessStatusCode)
+					{
+						TempData["SuccessMessage"] = "Add Category successfully.";
+						return RedirectToPage();
+					}
+					else
+					{
+						ModelState.AddModelError(string.Empty, "An error occurred while adding the category.");
+					}
+				}
+				return Page();
+			}
+			catch (Exception ex)
+			{
+				ModelState.AddModelError(string.Empty, $"An error occurred: {ex.Message}");
+				return Page();
+			}
+
+		}
 
 
 
-    }
+
+	}
 
 }

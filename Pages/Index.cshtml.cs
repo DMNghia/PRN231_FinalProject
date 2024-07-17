@@ -44,5 +44,46 @@ namespace FinalProject.Pages
                 //ViewData["enrolledCourses"] = (await response.Content.ReadFromJsonAsync<BaseResponse<List<GetAllCourseResponse>>>()).data;
             }
         }
+
+        public async Task<IActionResult> OnPost()
+        {
+            HttpClient _httpClient = new HttpClient();
+
+            try
+            {
+                if (Request.Form.TryGetValue("SubmitAddCategory", out var submitMoocValue) && submitMoocValue == "SubmitAddCategory")
+                {
+                    var categoryDTO = new CategoryDto
+                    {
+                        Name  = Request.Form["Name"],
+                        Description = Request.Form["Description"],
+                        Href = Request.Form["Href"],
+                        
+                    };
+                    var contentBody = new StringContent(JsonSerializer.Serialize(categoryDTO), null, "application/json");
+                    var request = new HttpRequestMessage(HttpMethod.Post, $"https://localhost:5000/api/Category/Add");
+                    request.Content = contentBody;
+                    string? jwtToken = HttpContext.Request.Cookies["jwt_token"];
+                    request.Headers.Add("Authorization", $"Bearer {jwtToken}");
+                    var response = await _httpClient.SendAsync(request);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        TempData["SuccessMessage"] = "Add Category successfully.";
+                        return RedirectToPage();
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, "An error occurred while adding the category.");
+                    }
+                }
+                return Page();
+            } catch (Exception ex)
+            {
+                ModelState.AddModelError(string.Empty, $"An error occurred: {ex.Message}");
+                return Page();
+            }
+           
+        }
     }
 }
+
