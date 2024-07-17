@@ -23,6 +23,11 @@ namespace FinalProject.Services
 
         public static UserLoginPrinciple GetPrincipleFromToken(string token)
         {
+            var jwtToken = new JwtSecurityToken(token);
+            if ((jwtToken == null) || (jwtToken.ValidFrom > DateTime.UtcNow) || (jwtToken.ValidTo < DateTime.UtcNow))
+            {
+                return null;
+            }
             var claims = new JwtSecurityTokenHandler().ReadJwtToken(token).Claims;
             return new UserLoginPrinciple
             {
@@ -52,7 +57,7 @@ namespace FinalProject.Services
             var token = new JwtSecurityToken(_config["Jwt:Issuer"],
               _config["Jwt:Issuer"],
               claims,
-              expires: DateTime.Now.AddHours(24),
+              expires: DateTime.Now.AddDays(7),
               signingCredentials: credentials);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
