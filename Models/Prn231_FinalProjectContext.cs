@@ -102,6 +102,8 @@ namespace FinalProject.Models
 
                 entity.Property(e => e.Href).HasMaxLength(500);
 
+                entity.Property(e => e.UpdateAt).HasColumnType("datetime");
+
                 entity.Property(e => e.UserId).HasColumnName("UserID");
 
                 entity.HasOne(d => d.Course)
@@ -223,6 +225,8 @@ namespace FinalProject.Models
                 entity.Property(e => e.Id).HasColumnName("ID");
 
                 entity.Property(e => e.CourseId).HasColumnName("CourseID");
+
+                entity.Property(e => e.UpdateAt).HasColumnType("datetime");
 
                 entity.Property(e => e.UserId).HasColumnName("UserID");
 

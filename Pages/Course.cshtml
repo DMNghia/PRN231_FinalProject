@@ -8,6 +8,9 @@
     Layout = null;
     List<GetAllCourseResponse> courses = ViewData["courses"] as List<GetAllCourseResponse>;
     List<GetCategoryResponse> categories = ViewData["categories"] as List<GetCategoryResponse>;
+    int pageNo = (int)ViewData["pageNo"];
+    int totalPage = (int) ViewData["totalPage"];
+    string? categoryQuery = ViewData["category"] as string;
     UserLoginPrinciple? principle = AuthService.GetPrinciple(HttpContext);
 }
 <!DOCTYPE html>
@@ -36,6 +39,7 @@
     <link href="assets/vendor/aos/aos.css" rel="stylesheet">
     <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
     <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+    <link href="~/assets/css/paging.css" rel="stylesheet" />
 
     <!-- Main CSS File -->
     <link href="assets/css/main.css" rel="stylesheet">
@@ -142,7 +146,17 @@
             </div>
 
         </section><!-- /Courses Section -->
-
+        <div class="containerPage">
+            <div class="pagination p3">
+                <ul>
+                    @for (int pageNum = 1; pageNum <= totalPage; pageNum++)
+                    {
+                        <a href="/khoa-hoc?@(categoryQuery != null ? $"category={categoryQuery}&" : "")pageNum=@pageNum" class="@(pageNo == pageNum ? "is-active" : "")">
+                        <li>@pageNum</li></a>
+                    }
+                </ul>
+            </div>
+        </div>
     </main>
 
     <footer id="footer" class="footer position-relative">
@@ -151,7 +165,7 @@
             <div class="row gy-4">
                 <div class="col-lg-4 col-md-6 footer-about">
                     <a href="index.html" class="logo d-flex align-items-center">
-                        <span class="sitename">Mentor</span>
+                        <span class="sitename">Free course</span>
                     </a>
                     <div class="footer-contact pt-3">
                         <p>A108 Adam Street</p>
