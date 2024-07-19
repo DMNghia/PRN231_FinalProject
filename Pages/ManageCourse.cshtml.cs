@@ -1,12 +1,24 @@
+﻿using FinalProject.Constants;
 using FinalProject.Dto;
 using FinalProject.Dto.Response;
 using FinalProject.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.IdentityModel.Tokens;
+using System.Text.Json;
 using System.Web;
 
 namespace FinalProject.Pages
 {
+    public class CreateCourseRequest
+    {
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public string Href { get; set; }
+        public string Image { get; set; }
+        public List<string> categories { get; set; }
+    }
+
     public class ManageCourseModel : PageModel
     {
         public async Task<IActionResult> OnGetAsync(int? pageNum, string? category, string? searchKey)
@@ -70,6 +82,74 @@ namespace FinalProject.Pages
             ViewData["query"] = query;
 
             return Page();
+        }
+
+        public async Task<IActionResult> OnPostAddCategory()
+        {
+            HttpClient _httpClient = new HttpClient();
+
+            try
+            {
+                if (Request.Form.TryGetValue("SubmitAddCategory", out var submitMoocValue) && submitMoocValue == "SubmitAddCategory")
+                {
+                    var categoryDTO = new CategoryDto
+                    {
+                        Name = Request.Form["Name"],
+                        Description = Request.Form["Description"],
+                        Href = Request.Form["Href"],
+
+                    };
+                    var contentBody = new StringContent(JsonSerializer.Serialize(categoryDTO), null, "application/json");
+                    var request = new HttpRequestMessage(HttpMethod.Post, $"https://localhost:5000/api/Category/Add");
+                    request.Content = contentBody;
+                    string? jwtToken = HttpContext.Request.Cookies["jwt_token"];
+                    request.Headers.Add("Authorization", $"Bearer {jwtToken}");
+                    var response = await _httpClient.SendAsync(request);
+                    BaseResponse<object> responseData = await response.Content.ReadFromJsonAsync<BaseResponse<object>>();
+                    if (responseData.code != ResponseCode.ERROR.GetHashCode())
+                    {
+                        TempData["SuccessMessage"] = responseData.message;
+                        return RedirectToPage();
+                    }
+                    else
+                    {
+                        TempData["ErrorMessage"] = responseData.message;
+                        return RedirectToPage();
+                    }
+                }
+                return Page();
+            }
+            catch (Exception ex)
+            {
+                TempData["ErrorMessage"] = "Có lỗi xảy ra";
+                return RedirectToPage();
+            }
+
+        }
+
+        public async Task<IActionResult> OnPostAsync(CreateCourseRequest request)
+        {
+            if (request.categories.IsNullOrEmpty())
+            {
+                TempData["ErrorMessage"] = "Vui lòng thêm ít nhất một loại";
+                return RedirectToPage();
+            }
+
+            HttpClient client = new HttpClient();
+            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, "https://localhost:5000/api/Course/add");
+            requestMessage.Content = new StringContent(JsonSerializer.Serialize(request), null, "application/json");
+            requestMessage.Headers.Add("Authorization", $"Bearer {HttpContext.Request.Cookies["jwt_token"]}");
+            HttpResponseMessage responseMessage = await client.SendAsync(requestMessage);
+            BaseResponse<object> response = await responseMessage.Content.ReadFromJsonAsync<BaseResponse<object>>();
+            if (response.code != ResponseCode.SUCCESS.GetHashCode())
+            {
+                TempData["ErrorMessage"] = response.message;
+            } else
+            {
+                TempData["SuccessMessage"] = response.message;
+            }
+
+            return RedirectToPage();
         }
     }
 }

@@ -154,6 +154,7 @@
             .wave-group .input:focus ~ .bar:after {
                 width: 50%;
             }
+
     </style>
 </head>
 
@@ -217,9 +218,7 @@
                             <ul>
                                 @if (principle != null && principle.Role == RoleName.TEACHER.ToString())
                                 {
-
                                     <li><a onclick="toggleAddCategory()">Thêm mới</a></li>
-
                                 }
                                 @foreach (GetCategoryResponse category in categories)
                                 {
@@ -390,6 +389,14 @@
 
     <!-- Main JS File -->
     <script src="/assets/js/main.js"></script>
+    <script>
+        function toggleAddCategory() {
+            var blur = document.getElementById('blur');
+            blur.classList.toggle('active');
+            var popup = document.getElementById('popupAddCategory');
+            popup.classList.toggle('active');
+        }
+    </script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const selectButton = document.getElementById('selectButton');

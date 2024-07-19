@@ -28,10 +28,10 @@ namespace FinalProject.Controllers
         }
 
         [HttpPost("add")]
-        public IActionResult AddCourse(AddCourseRequest request)
+        public IActionResult AddCourse([FromBody] AddCourseRequest request)
         {
             UserLoginPrinciple principle = AuthService.GetPrinciple(HttpContext);
-            var categories = _context.Categories.Where(cate => request.Categories.Contains(cate.Id));
+            var categories = _context.Categories.Where(cate => request.Categories.Contains(cate.Href));
             Course? existHrefCourse = _context.Courses.FirstOrDefault(c => c.Href.Equals(request.Href));
             if (existHrefCourse != null)
             {
@@ -57,6 +57,11 @@ namespace FinalProject.Controllers
                 CategoryId = cate.Id,
                 CourseId = newCourse.Id
             }));
+            _context.UserCourses.Add(new UserCourse
+            {
+                CourseId = newCourse.Id,
+                UserId = principle.Id
+            });
             _context.SaveChanges();
             return Ok(new BaseResponse<object>
             {

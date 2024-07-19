@@ -1,10 +1,11 @@
-using FinalProject.Constants;
+﻿using FinalProject.Constants;
 using FinalProject.Dto;
 using FinalProject.Dto.Response;
 using FinalProject.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.IdentityModel.Tokens;
+using Org.BouncyCastle.Asn1.Ocsp;
 using System.Security.Claims;
 using System.Text.Json;
 
@@ -84,8 +85,8 @@ namespace FinalProject.Pages
                 return Page();
             } catch (Exception ex)
             {
-                ModelState.AddModelError(string.Empty, $"An error occurred: {ex.Message}");
-                return Page();
+                TempData["ErrorMessage"] = "Có lỗi xảy ra";
+                return RedirectToPage();
             }
            
         }

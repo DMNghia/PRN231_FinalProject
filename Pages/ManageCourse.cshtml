@@ -14,6 +14,9 @@
     string? categoryQuery = ViewData["category"] as string;
     string query = ViewData["query"] as string;
     UserLoginPrinciple? principle = AuthService.GetPrinciple(HttpContext);
+
+    string? successMessage = TempData["SuccessMessage"] as string;
+    string? errorMessage = TempData["ErrorMessage"] as string;
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -42,6 +45,7 @@
     <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
     <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
     <link href="~/assets/css/paging.css" rel="stylesheet" />
+    <link href="~/assets/css/notification.css" rel="stylesheet" />
 
     <!-- Main CSS File -->
     <link href="assets/css/main.css" rel="stylesheet">
@@ -54,6 +58,108 @@
     * License: https://bootstrapmade.com/license/
     ======================================================== -->
     <style>
+        #popup, #popup1, #popupAddCategory {
+            position: fixed;
+            top: 30%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            height: fit-content;
+            padding: 50px;
+            box-shadow: 0 5px 30px rgba(0, 0, 0, .30);
+            background: #ffffff;
+            visibility: hidden;
+            opacity: 0.5;
+            transition: 0.5s;
+            z-index: 9999;
+            border-radius: 10px;
+        }
+
+            #popup.active, #popup1.active, #popupAddCategory.active {
+                top: 50%;
+                visibility: visible;
+                opacity: 1;
+                transform: 0.5s;
+            }
+
+        #blur.active {
+            filter: blur(20px);
+            pointer-events: none;
+            user-select: none;
+        }
+
+        .wave-group {
+            position: relative;
+        }
+
+            .wave-group .input {
+                font-size: 16px;
+                padding: 10px 10px 10px 5px;
+                display: block;
+                width: 200px;
+                border: none;
+                border-bottom: 1px solid #515151;
+                background: transparent;
+            }
+
+                .wave-group .input:focus {
+                    outline: none;
+                }
+
+            .wave-group .label {
+                color: #999;
+                font-size: 18px;
+                font-weight: normal;
+                position: absolute;
+                pointer-events: none;
+                left: 5px;
+                top: 10px;
+                display: flex;
+            }
+
+            .wave-group .label-char {
+                transition: 0.2s ease all;
+                transition-delay: calc(var(--index) * .05s);
+            }
+
+            .wave-group .input:focus ~ label .label-char,
+            .wave-group .input:valid ~ label .label-char {
+                transform: translateY(-20px);
+                font-size: 14px;
+                color: #5264AE;
+            }
+
+            .wave-group .bar {
+                position: relative;
+                display: block;
+                width: 200px;
+            }
+
+                .wave-group .bar:before, .wave-group .bar:after {
+                    content: '';
+                    height: 2px;
+                    width: 0;
+                    bottom: 1px;
+                    position: absolute;
+                    background: #5264AE;
+                    transition: 0.2s ease all;
+                    -moz-transition: 0.2s ease all;
+                    -webkit-transition: 0.2s ease all;
+                }
+
+                .wave-group .bar:before {
+                    left: 50%;
+                }
+
+                .wave-group .bar:after {
+                    right: 50%;
+                }
+
+            .wave-group .input:focus ~ .bar:before,
+            .wave-group .input:focus ~ .bar:after {
+                width: 50%;
+            }
+
         .button {
             position: relative;
             border-radius: 12px;
@@ -159,224 +265,484 @@
             font-size: 15px;
             padding: 18px;
         }
-    </style>
-</head>
 
-<body class="courses-page">
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            backdrop-filter: blur(5px);
+        }
 
-    <header id="header" class="header d-flex align-items-center sticky-top">
-        <div class="container-fluid container-xl position-relative d-flex align-items-center">
+        .card {
+            position: fixed;
+            top: -120%;
+            left: 50%;
+            transform: translateX(-40%);
+            background: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            transition: top 0.5s ease;
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            width: 550px;
+            display: flex;
+            flex-direction: column;
+            max-height: 98%;
+            overflow-y: auto;
+        }
 
-            <a href="/" class="logo d-flex align-items-center me-auto">
-                <!-- Uncomment the line below if you also wish to use an image logo -->
-                <!-- <img src="./assets/img/logo.png" alt=""> -->
-                <h1 class="sitename">Free course</h1>
-            </a>
-
-            <nav id="navmenu" class="navmenu">
-                <ul>
-                    <li><a href="/">Trang chủ<br></a></li>
-                    <li><a href="/khoa-hoc">Khóa học</a></li>
-                    @if (principle.Role.Equals(RoleName.TEACHER.ToString()))
-                    {
-                        <li><a href="/quan-ly-khoa-hoc" class="active">Quản lý khóa học</a></li>
-                    }
-                    <li class="dropdown">
-                        <a href="#"><span>Phân loại</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
-                        <ul>
-                            @foreach (GetCategoryResponse category in categories)
-                            {
-                                <li><a href="/quan-ly-khoa-hoc?category=@category.Href">@category.Name</a></li>
-                            }
-                        </ul>
-                    </li>
-                </ul>
-                <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
-            </nav>
-
-            <a class="btn-getstarted" href="@(principle != null ? "/" : "/dang-nhap")">@(principle?.FullName != null ? principle.FullName : "Đăng nhập")</a>
-            @if (principle != null)
-            {
-                <a class="btn-getstarted" href="/dang-nhap">Đăng xuất</a>
+            .card.show {
+                top: 50%;
+                transform: translate(-50%, -50%);
             }
 
+        .group {
+            margin-bottom: 15px;
+        }
+
+            .group label {
+                display: block;
+                margin-bottom: 5px;
+            }
+
+            .group input,
+            .group textarea {
+                width: 100%;
+                padding: 8px;
+                box-sizing: border-box;
+            }
+
+        button {
+            padding: 10px 15px;
+            background: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+            button:hover {
+                background: #0056b3;
+            }
+
+        .title {
+            font-size: 24px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .form {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .group {
+            position: relative;
+        }
+
+        .form .group label {
+            font-size: 14px;
+            color: rgb(99, 102, 102);
+            position: absolute;
+            top: -10px;
+            left: 10px;
+            background-color: #fff;
+            transition: all 0.3s ease;
+        }
+
+        .form .group input,
+        .form .group textarea {
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid rgba(0, 0, 0, 0.2);
+            margin-bottom: 20px;
+            outline: 0;
+            width: 100%;
+            background-color: transparent;
+        }
+
+            .form .group input:placeholder-shown + label,
+            .form .group textarea:placeholder-shown + label {
+                top: 10px;
+                background-color: transparent;
+            }
+
+            .form .group input:focus,
+            .form .group textarea:focus {
+                border-color: #3366cc;
+            }
+
+                .form .group input:focus + label,
+                .form .group textarea:focus + label {
+                    top: -10px;
+                    left: 10px;
+                    background-color: #fff;
+                    color: #3366cc;
+                    font-weight: 600;
+                    font-size: 14px;
+                }
+
+        .form .group textarea {
+            resize: none;
+            height: 100px;
+        }
+
+        .form button {
+            background-color: #3366cc;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+            .form button:hover {
+                background-color: #27408b;
+            }
+
+        .pass-settings .options {
+            display: flex;
+            list-style: none;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+
+            .pass-settings .options .option {
+                display: flex;
+                align-items: center;
+                margin-bottom: 1rem;
+                width: calc(100% / 2);
+            }
+
+        .options .option:first-child input {
+            opacity: 0.7;
+        }
+
+        .options .option input {
+            height: 16px;
+            width: 16px;
+            cursor: pointer;
+        }
+
+        .options .option label {
+            cursor: pointer;
+            color: #000;
+            padding-left: 0.63rem;
+        }
+
+        .pass-settings input[type='checkbox'] {
+            accent-color: #46496E;
+        }
+    </style>
+</head>
+<div id="popupAddCategory">
+    <form asp-page-handler="AddCategory" method="post">
+        <div class="wave-group">
+            <input type="text" class="input" id="detailName" name="Name" style="margin-top: 20px; width: 80%" required>
+            <span class="bar"></span>
+            <label class="label">
+                <span class="label-char" style="--index: 0">T</span>
+                <span class="label-char" style="--index: 1">ê</span>
+                <span class="label-char" style="--index: 2">n</span>
+
+            </label>
         </div>
-    </header>
 
-    <main class="main">
+        <div class="wave-group" style="margin-top: 20px;">
+            <label>Mô Tả Phân Loại:</label><br>
+            <textarea rows="10" cols="25" name="Description" style="width: 80%; font-size: 16px;" placeholder="Paste here..." required></textarea>
+        </div>
 
-        <!-- Page Title -->
-        <div class="page-title" data-aos="fade">
-            <div class="heading">
-                <div class="container">
-                    <div class="row d-flex justify-content-center text-center">
-                        <div class="col-lg-8">
-                            <h1>Quản lý khóa học</h1>
-                            <p class="mb-0">Danh sách các khóa học sở hữu</p>
+        <div class="wave-group">
+            <input type="text" class="input" id="detailCategoryHref" name="Href" style="margin-top: 20px; width: 80%" required>
+            <span class="bar"></span>
+            <label class="label">
+                <span class="label-char" style="--index: 0">H</span>
+                <span class="label-char" style="--index: 1">r</span>
+                <span class="label-char" style="--index: 2">e</span>
+                <span class="label-char" style="--index: 3">f</span>
+
+            </label>
+        </div>
+
+        <div style="margin-top: 20px;">
+            <button type="submit" name="SubmitAddCategory" value="SubmitAddCategory" style="padding: 10px; cursor: pointer; border-radius: 7px; border: 1px solid #5c636a; margin-right: 20px;">Tạo mới phân loại</button>
+            <button type="button" onclick="toggleAddCategory()" style="padding: 10px; cursor: pointer; border-radius: 7px; border: 1px solid #5c636a;">Đóng</button>
+        </div>
+    </form>
+</div>
+<body class="courses-page">
+    <div class="overlay" id="overlay"></div>
+    @*form add course*@
+    <div class="card" id="card">
+        <span class="title">Thêm khóa học mới</span>
+        <form class="form" method="post">
+            <div class="group">
+                <input placeholder="" id="nameAddNew" name="name" type="text" required="" />
+                <label for="nameAddNew">Tên khóa học</label>
+            </div>
+            <div class="group">
+                <input placeholder="" id="imageAddNew" name="image" type="text" required="" />
+                <label for="imageAddNew">Đường dẫn ảnh</label>
+            </div>
+            <div class="group">
+                <input placeholder=""
+                       type="text"
+                       id="hrefAddNew"
+                       name="href"
+                       required="" />
+                <label for="description">Đường dẫn</label>
+            </div>
+            <div class="group">
+                <textarea placeholder=""
+                          id="descriptionAddNew"
+                          name="description"
+                          rows="5"
+                          required=""></textarea>
+                <label for="descriptionAddNew">Mô tả</label>
+            </div>
+            <div class="pass-settings">
+                <label class="title">Phân loại</label>
+                <ul class="options">
+                    @foreach (GetCategoryResponse category in categories)
+                    {
+                        <li class="option">
+                            <input name="categories" value="@category.Href" id="@category.Href" type="checkbox">
+                            <label for="@category.Href">@category.Name</label>
+                        </li>
+                    }
+                </ul>
+            </div>
+            <button type="submit">Thêm</button>
+        </form>
+    </div>
+    <div id="blur">
+        <header id="header" class="header d-flex align-items-center sticky-top">
+            <div class="container-fluid container-xl position-relative d-flex align-items-center">
+
+                <a href="/" class="logo d-flex align-items-center me-auto">
+                    <!-- Uncomment the line below if you also wish to use an image logo -->
+                    <!-- <img src="./assets/img/logo.png" alt=""> -->
+                    <h1 class="sitename">Free course</h1>
+                </a>
+
+                <nav id="navmenu" class="navmenu">
+                    <ul>
+                        <li><a href="/">Trang chủ<br></a></li>
+                        <li><a href="/khoa-hoc">Khóa học</a></li>
+                        @if (principle.Role.Equals(RoleName.TEACHER.ToString()))
+                        {
+                            <li><a href="/quan-ly-khoa-hoc" class="active">Quản lý khóa học</a></li>
+                        }
+                        <li class="dropdown">
+                            <a href="#"><span>Phân loại</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
+                            <ul>
+                                @if (principle != null && principle.Role == RoleName.TEACHER.ToString())
+                                {
+                                    <li><a onclick="toggleAddCategory()">Thêm mới</a></li>
+                                }
+                                @foreach (GetCategoryResponse category in categories)
+                                {
+                                    <li><a href="/quan-ly-khoa-hoc?category=@category.Href">@category.Name</a></li>
+                                }
+                            </ul>
+                        </li>
+                    </ul>
+                    <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+                </nav>
+
+                <a class="btn-getstarted" href="@(principle != null ? "/" : "/dang-nhap")">@(principle?.FullName != null ? principle.FullName : "Đăng nhập")</a>
+                @if (principle != null)
+                {
+                    <a class="btn-getstarted" href="/dang-nhap">Đăng xuất</a>
+                }
+            </div>
+            <div id="notification-area"></div>
+        </header>
+
+        <main class="main">
+
+            <!-- Page Title -->
+            <div class="page-title" data-aos="fade">
+                <div class="heading">
+                    <div class="container">
+                        <div class="row d-flex justify-content-center text-center">
+                            <div class="col-lg-8">
+                                <h1>Quản lý khóa học</h1>
+                                <p class="mb-0">Danh sách các khóa học sở hữu</p>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <nav class="breadcrumbs">
-                <div class="container">
-                    <ol>
-                        <li><a href="/">Trang chủ</a></li>
-                        <li class="current">Quản lý khóa học</li>
-                    </ol>
-                </div>
-            </nav>
-        </div><!-- End Page Title -->
-        <div class="container p-2">
-            <div class="container justify-content-center d-flex">
-                <div class="col-lg-4">
-                    <div class="searchBox">
-                        <input class="searchInput" type="text" name="searchKey" id="searchInput" placeholder="Tìm kiếm khóa học">
-                        <button class="searchButton" type="button" id="searchButton">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="29" height="29" viewBox="0 0 29 29" fill="none">
-                                <g clip-path="url(#clip0_2_17)">
-                                    <g filter="url(#filter0_d_2_17)">
-                                        <path d="M23.7953 23.9182L19.0585 19.1814M19.0585 19.1814C19.8188 18.4211 20.4219 17.5185 20.8333 16.5251C21.2448 15.5318 21.4566 14.4671 21.4566 13.3919C21.4566 12.3167 21.2448 11.252 20.8333 10.2587C20.4219 9.2653 19.8188 8.36271 19.0585 7.60242C18.2982 6.84214 17.3956 6.23905 16.4022 5.82759C15.4089 5.41612 14.3442 5.20435 13.269 5.20435C12.1938 5.20435 11.1291 5.41612 10.1358 5.82759C9.1424 6.23905 8.23981 6.84214 7.47953 7.60242C5.94407 9.13789 5.08145 11.2204 5.08145 13.3919C5.08145 15.5634 5.94407 17.6459 7.47953 19.1814C9.01499 20.7168 11.0975 21.5794 13.269 21.5794C15.4405 21.5794 17.523 20.7168 19.0585 19.1814Z" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" shape-rendering="crispEdges"></path>
+                <nav class="breadcrumbs">
+                    <div class="container">
+                        <ol>
+                            <li><a href="/">Trang chủ</a></li>
+                            <li class="current">Quản lý khóa học</li>
+                        </ol>
+                    </div>
+                </nav>
+            </div><!-- End Page Title -->
+            <div class="container p-2">
+                <div class="container justify-content-center d-flex">
+                    <div class="col-lg-4">
+                        <div class="searchBox">
+                            <input class="searchInput" type="text" name="searchKey" id="searchInput" placeholder="Tìm kiếm khóa học">
+                            <button class="searchButton" type="button" id="searchButton">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="29" height="29" viewBox="0 0 29 29" fill="none">
+                                    <g clip-path="url(#clip0_2_17)">
+                                        <g filter="url(#filter0_d_2_17)">
+                                            <path d="M23.7953 23.9182L19.0585 19.1814M19.0585 19.1814C19.8188 18.4211 20.4219 17.5185 20.8333 16.5251C21.2448 15.5318 21.4566 14.4671 21.4566 13.3919C21.4566 12.3167 21.2448 11.252 20.8333 10.2587C20.4219 9.2653 19.8188 8.36271 19.0585 7.60242C18.2982 6.84214 17.3956 6.23905 16.4022 5.82759C15.4089 5.41612 14.3442 5.20435 13.269 5.20435C12.1938 5.20435 11.1291 5.41612 10.1358 5.82759C9.1424 6.23905 8.23981 6.84214 7.47953 7.60242C5.94407 9.13789 5.08145 11.2204 5.08145 13.3919C5.08145 15.5634 5.94407 17.6459 7.47953 19.1814C9.01499 20.7168 11.0975 21.5794 13.269 21.5794C15.4405 21.5794 17.523 20.7168 19.0585 19.1814Z" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" shape-rendering="crispEdges"></path>
+                                        </g>
                                     </g>
-                                </g>
-                                <defs>
-                                    <filter id="filter0_d_2_17" x="-0.418549" y="3.70435" width="29.7139" height="29.7139" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
-                                        <feFlood flood-opacity="0" result="BackgroundImageFix"></feFlood>
-                                        <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"></feColorMatrix>
-                                        <feOffset dy="4"></feOffset>
-                                        <feGaussianBlur stdDeviation="2"></feGaussianBlur>
-                                        <feComposite in2="hardAlpha" operator="out"></feComposite>
-                                        <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"></feColorMatrix>
-                                        <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_2_17"></feBlend>
-                                        <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_2_17" result="shape"></feBlend>
-                                    </filter>
-                                    <clipPath id="clip0_2_17">
-                                        <rect width="28.0702" height="28.0702" fill="white" transform="translate(0.403503 0.526367)"></rect>
-                                    </clipPath>
-                                </defs>
-                            </svg>
-                        </button>
+                                    <defs>
+                                        <filter id="filter0_d_2_17" x="-0.418549" y="3.70435" width="29.7139" height="29.7139" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                                            <feFlood flood-opacity="0" result="BackgroundImageFix"></feFlood>
+                                            <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"></feColorMatrix>
+                                            <feOffset dy="4"></feOffset>
+                                            <feGaussianBlur stdDeviation="2"></feGaussianBlur>
+                                            <feComposite in2="hardAlpha" operator="out"></feComposite>
+                                            <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"></feColorMatrix>
+                                            <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_2_17"></feBlend>
+                                            <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_2_17" result="shape"></feBlend>
+                                        </filter>
+                                        <clipPath id="clip0_2_17">
+                                            <rect width="28.0702" height="28.0702" fill="white" transform="translate(0.403503 0.526367)"></rect>
+                                        </clipPath>
+                                    </defs>
+                                </svg>
+                            </button>
+                        </div>
                     </div>
                 </div>
+                <button type="button" class="button float-end" id="show-card-btn">
+                    <span class="button__text">Tạo mới</span>
+                    <span class="button__icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" viewBox="0 0 24 24" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" stroke="currentColor" height="24" fill="none" class="svg"><line y2="19" y1="5" x2="12" x1="12"></line><line y2="12" y1="12" x2="19" x1="5"></line></svg></span>
+                </button>
             </div>
-            <button type="button" class="button float-end">
-                <span class="button__text">Tạo mới</span>
-                <span class="button__icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" viewBox="0 0 24 24" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" stroke="currentColor" height="24" fill="none" class="svg"><line y2="19" y1="5" x2="12" x1="12"></line><line y2="12" y1="12" x2="19" x1="5"></line></svg></span>
-            </button>
-        </div>
-        <!-- Courses Section -->
-        <section id="courses" class="courses section">
-            <div class="container">
-                <div class="row">
-                    @foreach (GetAllCourseResponse course in courses)
-                    {
-                        <div class="col-lg-4 col-md-6 d-flex align-items-stretch" data-aos="zoom-in" data-aos-delay="100">
-                            <div class="course-item">
-                                <img src="@course.Image" class="img-fluid m-lg-auto" alt="...">
-                                <div class="course-content">
-                                    <div class="d-flex justify-content-between align-items-center mb-3">
-                                        @foreach (CategoryDto category in course.Categories)
-                                        {
-                                            <p class="category">@category.Name</p>
-                                        }
-                                    </div>
-                                    <h3><a href="@(principle != null ? $"/khoa-hoc/{course.Href}" : "/dang-nhap")">@course.Name</a></h3>
-                                    <p class="description">@course.Description</p>
-                                    <div class="trainer d-flex justify-content-between align-items-center">
-                                        <div class="trainer-profile d-flex align-items-center">
-                                            <a href="" class="trainer-link">@course.Teacher.FullName</a>
+            <!-- Courses Section -->
+            <section id="courses" class="courses section">
+                <div class="container">
+                    <div class="row">
+                        @foreach (GetAllCourseResponse course in courses)
+                        {
+                            <div class="col-lg-4 col-md-6 d-flex align-items-stretch" data-aos="zoom-in" data-aos-delay="100">
+                                <div class="course-item">
+                                    <img src="@course.Image" class="img-fluid m-lg-auto" alt="...">
+                                    <div class="course-content">
+                                        <div class="d-flex justify-content-between align-items-center mb-3">
+                                            @foreach (CategoryDto category in course.Categories)
+                                            {
+                                                <p class="category">@category.Name</p>
+                                            }
+                                        </div>
+                                        <h3><a href="@(principle != null ? $"/khoa-hoc/{course.Href}" : "/dang-nhap")">@course.Name</a></h3>
+                                        <p class="description">@course.Description</p>
+                                        <div class="trainer d-flex justify-content-between align-items-center">
+                                            <div class="trainer-profile d-flex align-items-center">
+                                                <a href="" class="trainer-link">@course.Teacher.FullName</a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                        }
+                    </div>
+                </div>
+
+            </section><!-- /Courses Section -->
+            <div class="containerPage">
+                <div class="pagination p3">
+                    <ul>
+                        @for (int pageNum = 1; pageNum <= totalPage; pageNum++)
+                        {
+                            <a href="/quan-ly-khoa-hoc@(query != null ? query : "")&pageNum=@pageNum" class="@(pageNo == pageNum ? "is-active" : "")">
+                            <li>@pageNum</li></a>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </main>
+
+        <footer id="footer" class="footer position-relative">
+
+            <div class="container footer-top">
+                <div class="row gy-4">
+                    <div class="col-lg-4 col-md-6 footer-about">
+                        <a href="index.html" class="logo d-flex align-items-center">
+                            <span class="sitename">Free course</span>
+                        </a>
+                        <div class="footer-contact pt-3">
+                            <p>A108 Adam Street</p>
+                            <p>New York, NY 535022</p>
+                            <p class="mt-3"><strong>Phone:</strong> <span>+1 5589 55488 55</span></p>
+                            <p><strong>Email:</strong> <span>info@example.com</span></p>
                         </div>
-                    }
-                </div>
-            </div>
-
-        </section><!-- /Courses Section -->
-        <div class="containerPage">
-            <div class="pagination p3">
-                <ul>
-                    @for (int pageNum = 1; pageNum <= totalPage; pageNum++)
-                    {
-                        <a href="/quan-ly-khoa-hoc@(query != null ? query : "")&pageNum=@pageNum" class="@(pageNo == pageNum ? "is-active" : "")">
-                        <li>@pageNum</li></a>
-                    }
-                </ul>
-            </div>
-        </div>
-    </main>
-
-    <footer id="footer" class="footer position-relative">
-
-        <div class="container footer-top">
-            <div class="row gy-4">
-                <div class="col-lg-4 col-md-6 footer-about">
-                    <a href="index.html" class="logo d-flex align-items-center">
-                        <span class="sitename">Free course</span>
-                    </a>
-                    <div class="footer-contact pt-3">
-                        <p>A108 Adam Street</p>
-                        <p>New York, NY 535022</p>
-                        <p class="mt-3"><strong>Phone:</strong> <span>+1 5589 55488 55</span></p>
-                        <p><strong>Email:</strong> <span>info@example.com</span></p>
+                        <div class="social-links d-flex mt-4">
+                            <a href=""><i class="bi bi-twitter-x"></i></a>
+                            <a href=""><i class="bi bi-facebook"></i></a>
+                            <a href=""><i class="bi bi-instagram"></i></a>
+                            <a href=""><i class="bi bi-linkedin"></i></a>
+                        </div>
                     </div>
-                    <div class="social-links d-flex mt-4">
-                        <a href=""><i class="bi bi-twitter-x"></i></a>
-                        <a href=""><i class="bi bi-facebook"></i></a>
-                        <a href=""><i class="bi bi-instagram"></i></a>
-                        <a href=""><i class="bi bi-linkedin"></i></a>
+
+                    <div class="col-lg-2 col-md-3 footer-links">
+                        <h4>Useful Links</h4>
+                        <ul>
+                            <li><a href="#">Home</a></li>
+                            <li><a href="#">About us</a></li>
+                            <li><a href="#">Services</a></li>
+                            <li><a href="#">Terms of service</a></li>
+                            <li><a href="#">Privacy policy</a></li>
+                        </ul>
                     </div>
-                </div>
 
-                <div class="col-lg-2 col-md-3 footer-links">
-                    <h4>Useful Links</h4>
-                    <ul>
-                        <li><a href="#">Home</a></li>
-                        <li><a href="#">About us</a></li>
-                        <li><a href="#">Services</a></li>
-                        <li><a href="#">Terms of service</a></li>
-                        <li><a href="#">Privacy policy</a></li>
-                    </ul>
-                </div>
+                    <div class="col-lg-2 col-md-3 footer-links">
+                        <h4>Our Services</h4>
+                        <ul>
+                            <li><a href="#">Web Design</a></li>
+                            <li><a href="#">Web Development</a></li>
+                            <li><a href="#">Product Management</a></li>
+                            <li><a href="#">Marketing</a></li>
+                            <li><a href="#">Graphic Design</a></li>
+                        </ul>
+                    </div>
 
-                <div class="col-lg-2 col-md-3 footer-links">
-                    <h4>Our Services</h4>
-                    <ul>
-                        <li><a href="#">Web Design</a></li>
-                        <li><a href="#">Web Development</a></li>
-                        <li><a href="#">Product Management</a></li>
-                        <li><a href="#">Marketing</a></li>
-                        <li><a href="#">Graphic Design</a></li>
-                    </ul>
-                </div>
+                    <div class="col-lg-4 col-md-12 footer-newsletter">
+                        <h4>Our Newsletter</h4>
+                        <p>Subscribe to our newsletter and receive the latest news about our products and services!</p>
+                        <form action="forms/newsletter.php" method="post" class="php-email-form">
+                            <div class="newsletter-form"><input type="email" name="email"><input type="submit" value="Subscribe"></div>
+                            <div class="loading">Loading</div>
+                            <div class="error-message"></div>
+                            <div class="sent-message">Your subscription request has been sent. Thank you!</div>
+                        </form>
+                    </div>
 
-                <div class="col-lg-4 col-md-12 footer-newsletter">
-                    <h4>Our Newsletter</h4>
-                    <p>Subscribe to our newsletter and receive the latest news about our products and services!</p>
-                    <form action="forms/newsletter.php" method="post" class="php-email-form">
-                        <div class="newsletter-form"><input type="email" name="email"><input type="submit" value="Subscribe"></div>
-                        <div class="loading">Loading</div>
-                        <div class="error-message"></div>
-                        <div class="sent-message">Your subscription request has been sent. Thank you!</div>
-                    </form>
                 </div>
-
             </div>
-        </div>
 
-        <div class="container copyright text-center mt-4">
-            <p>© <span>Copyright</span> <strong class="px-1 sitename">Mentor</strong> <span>All Rights Reserved</span></p>
-            <div class="credits">
-                <!-- All the links in the footer should remain intact. -->
-                <!-- You can delete the links only if you've purchased the pro version. -->
-                <!-- Licensing information: https://bootstrapmade.com/license/ -->
-                <!-- Purchase the pro version with working PHP/AJAX contact form: [buy-url] -->
-                Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+            <div class="container copyright text-center mt-4">
+                <p>© <span>Copyright</span> <strong class="px-1 sitename">Mentor</strong> <span>All Rights Reserved</span></p>
+                <div class="credits">
+                    <!-- All the links in the footer should remain intact. -->
+                    <!-- You can delete the links only if you've purchased the pro version. -->
+                    <!-- Licensing information: https://bootstrapmade.com/license/ -->
+                    <!-- Purchase the pro version with working PHP/AJAX contact form: [buy-url] -->
+                    Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
+                </div>
             </div>
-        </div>
 
-    </footer>
+        </footer>
+    </div>
 
     <!-- Scroll Top -->
     <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
@@ -394,6 +760,15 @@
 
     <!-- Main JS File -->
     <script src="./assets/js/main.js"></script>
+    <script src="~/assets/js/notification.js"></script>
+    <script>
+        function toggleAddCategory() {
+            var blur = document.getElementById('blur');
+            blur.classList.toggle('active');
+            var popup = document.getElementById('popupAddCategory');
+            popup.classList.toggle('active');
+        }
+    </script>
     <script>
         document.getElementById("searchButton").addEventListener('click', () => {
             const searchInput = document.getElementById("searchInput").value;
@@ -402,6 +777,40 @@
         })
     </script>
 
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const showCardBtn = document.getElementById("show-card-btn");
+            const card = document.getElementById("card");
+            const overlay = document.getElementById("overlay");
+
+            showCardBtn.addEventListener("click", function () {
+                card.classList.add("show");
+                overlay.style.display = "block";
+            });
+
+            overlay.addEventListener("click", function () {
+                card.classList.remove("show");
+                overlay.style.display = "none";
+            });
+        });
+    </script>
+
+    @if (errorMessage != null)
+    {
+        <script>
+            window.onload = () => {
+                notify('danger', '@errorMessage')
+            };
+        </script>
+    }
+    @if (successMessage != null)
+    {
+        <script>
+            window.onload = () => {
+                notify('success', '@successMessage');
+            };
+        </script>
+    }
 </body>
 
 </html>
