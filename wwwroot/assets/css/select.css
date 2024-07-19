@@ -1,0 +1,53 @@
+﻿.custom-select {
+    position: relative;
+    display: inline-block;
+    margin: 10px;
+}
+
+.select-button {
+    background-color: #4CAF50;
+    color: white;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 20px;
+    padding-right: 20px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+    .select-button:hover, .select-button:focus {
+        background-color: #45a049;
+    }
+
+.select-menu {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    border-radius: 4px;
+    max-height: 200px; /* Set a maximum height */
+    overflow-y: auto; /* Add vertical scrollbar */
+    margin-top: 5px;
+}
+
+    .select-menu a {
+        color: black;
+        padding: 12px 16px;
+        text-decoration: none;
+        display: block;
+        border-radius: 4px;
+    }
+
+        .select-menu a:hover {
+            background-color: #f1f1f1;
+        }
+
+/* Show the dropdown menu on button click */
+.custom-select:focus-within .select-menu,
+.select-button:focus + .select-menu {
+    display: block;
+}

@@ -14,10 +14,11 @@ namespace FinalProject.Services
         private readonly Prn231_FinalProjectContext context;
         private readonly JwtService jwtService;
 
-        public AuthService(ILogger<AuthService> logger, Prn231_FinalProjectContext context)
+        public AuthService(ILogger<AuthService> logger, Prn231_FinalProjectContext context, JwtService jwtService)
         {
             _logger = logger;
             this.context = context;
+            this.jwtService = jwtService;
         }
 
         public async Task<BaseResponse<SignInResponse>> LoginWithGoogle(string email, string name, HttpContext HttpContext)
@@ -65,6 +66,7 @@ namespace FinalProject.Services
             }
             string token = jwtService.GenerateJSONWebToken(new UserLoginPrinciple
             {
+                Id = existUser.Id,
                 Email = existUser.Email,
                 FullName = existUser.FullName,
                 IsActive = existUser.IsActive ?? false,

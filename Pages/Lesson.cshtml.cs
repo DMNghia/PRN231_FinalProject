@@ -4,6 +4,7 @@ using FinalProject.Constants;
 using FinalProject.Dto;
 using FinalProject.Dto.Response;
 using FinalProject.Models;
+using FinalProject.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json.Linq;
@@ -13,29 +14,46 @@ namespace FinalProject.Pages
 {
     public class LessonModel : PageModel
     {
-        public async Task OnGet(string hrefKhoaHoc, string? hrefBaiHoc)
+        public async Task<IActionResult> OnGet(string hrefKhoaHoc, string? hrefBaiHoc)
         {
+            UserLoginPrinciple? principle = AuthService.GetPrinciple(HttpContext);
+            if (principle == null)
+            {
+                return RedirectToPage("./Login");
+            }
             HttpClient _httpClient = new HttpClient();
-
-
-            HttpResponseMessage response = _httpClient.GetAsync($"https://localhost:5000/api/Lesson/Lesson-detail?href={hrefBaiHoc}").Result;
+            HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, $"https://localhost:5000/api/Lesson/Lesson-detail?href={hrefBaiHoc}");
+            requestMessage.Headers.Add("Authorization", $"Bearer {HttpContext.Request.Cookies["jwt_token"]}");
+            HttpResponseMessage response = await _httpClient.SendAsync(requestMessage);
             var lesson = response.Content.ReadFromJsonAsync<LessonDTO>().Result;
-            HttpResponseMessage response1 = _httpClient.GetAsync($"https://localhost:5000/api/Lesson/ListLesson").Result;
-            var lessons = response1.Content.ReadFromJsonAsync<List<LessonDTO>>().Result;
-            HttpResponseMessage response2 = _httpClient.GetAsync($"https://localhost:5000/api/Mooc/GetMoocs").Result;
+
+            requestMessage = new HttpRequestMessage(HttpMethod.Get, $"https://localhost:5000/api/Lesson/ListLesson");
+            requestMessage.Headers.Add("Authorization", $"Bearer {HttpContext.Request.Cookies["jwt_token"]}");
+            response = _httpClient.SendAsync(requestMessage).Result;
+            var lessons = response.Content.ReadFromJsonAsync<List<LessonDTO>>().Result;
+
+            requestMessage = new HttpRequestMessage(HttpMethod.Get, $"https://localhost:5000/api/Mooc/GetMoocs");
+            requestMessage.Headers.Add("Authorization", $"Bearer {HttpContext.Request.Cookies["jwt_token"]}");
+            HttpResponseMessage response2 = _httpClient.SendAsync(requestMessage).Result;
             var moocs = response2.Content.ReadFromJsonAsync<List<MoocDTO>>().Result;
 
-			HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, "https://localhost:5000/api/Category");
+			requestMessage = new HttpRequestMessage(HttpMethod.Get, "https://localhost:5000/api/Category");
 			HttpResponseMessage response3 = await _httpClient.SendAsync(requestMessage);
 			BaseResponse<List<GetCategoryResponse>> responseGetAllCategories = await response3.Content.ReadFromJsonAsync<BaseResponse<List<GetCategoryResponse>>>();
-			ViewData["categories"] = responseGetAllCategories.data;
+
+            // Update course enrolled
+            requestMessage = new HttpRequestMessage(HttpMethod.Post, $"https://localhost:5000/api/Course/add-course-enroll?hrefCourse={hrefKhoaHoc}&hrefLesson={hrefBaiHoc}");
+            requestMessage.Headers.Add("Authorization", $"Barear {HttpContext.Request.Cookies["jwt_token"]}");
+            await _httpClient.SendAsync(requestMessage);
+
+            ViewData["categories"] = responseGetAllCategories.data;
 
 			ViewData["lesson"] = lesson;
             ViewData["lessons"] = lessons;
             ViewData["hrefKhoaHoc"] = hrefKhoaHoc;
             ViewData["moocs"] = moocs;
 
-            //UserLoginPrinciple? principle = HttpContext.Items["principle"] as UserLoginPrinciple;
+            return Page();
         }
 
         public async Task<IActionResult> OnPost(string courseHref, MoocDTO moocDTO)

@@ -17,8 +17,8 @@ namespace FinalProject.Security
         private readonly JwtService jwtService;
         private readonly ILogger<JwtFilter> logger;
 
-        private readonly string[] AUTHEN_LIST_URL = new string[] { "/api/auth/get-login"};
-        private readonly string[] TEACHER_ROLE_URL = new string[] { "/api/Course/teacher-created", "/api/category/Add", "/api/lesson/addlesson", "/api/lesson/deletelesson/*", "/api/lesson/editlesson/*", "/api/mooc/addmooc", "/api/mooc/editmooc/*", "/api/mooc/deletemooc" };
+        private readonly string[] AUTHEN_LIST_URL = new string[] { "/api/auth/get-login", "/api/course/detail/*", "/api/course/add-course-enroll", "/api/course/enrolleds", "/api/lesson/*" };
+        private readonly string[] TEACHER_ROLE_URL = new string[] { "/api/Course/teacher-created", "/api/category/Add", "/api/lesson/addlesson", "/api/lesson/deletelesson/*", "/api/lesson/editlesson/*", "/api/mooc/addmooc", "/api/mooc/editmooc/*", "/api/mooc/deletemooc", "/api/Course/totalPage/teacher-created", "/api/course/add" };
 
         public JwtFilter(JwtService jwtService, ILogger<JwtFilter> logger)
         {
@@ -83,6 +83,10 @@ namespace FinalProject.Security
         private bool isAuthenNeeded(string path)
         {
             path = path.ToLower();
+            if (isTeacherRoleUrl(path))
+            {
+                return true;
+            }
             foreach (string url in AUTHEN_LIST_URL)
             {
                 string lowerUrl = url.ToLower();

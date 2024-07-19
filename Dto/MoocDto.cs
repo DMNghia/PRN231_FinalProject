@@ -9,7 +9,6 @@ namespace FinalProject.Dto
         public string? Description { get; set; }
         public int? CourseId { get; set; }
 
-
         public List<LessonDTO> Lessons { get; set; }
     }
 }

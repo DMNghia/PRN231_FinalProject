@@ -1,5 +1,5 @@
-﻿@page "/khoa-hoc"
-@model FinalProject.Pages.CourseModel
+﻿@page "/quan-ly-khoa-hoc"
+@model FinalProject.Pages.ManageCourseModel
 @using FinalProject.Dto.Response
 @using FinalProject.Dto
 @using FinalProject.Services
@@ -176,17 +176,17 @@
             <nav id="navmenu" class="navmenu">
                 <ul>
                     <li><a href="/">Trang chủ<br></a></li>
-                    <li><a href="/khoa-hoc" class="active">Khóa học</a></li>
+                    <li><a href="/khoa-hoc">Khóa học</a></li>
                     @if (principle.Role.Equals(RoleName.TEACHER.ToString()))
                     {
-                        <li><a href="/quan-ly-khoa-hoc">Quản lý khóa học</a></li>
+                        <li><a href="/quan-ly-khoa-hoc" class="active">Quản lý khóa học</a></li>
                     }
                     <li class="dropdown">
                         <a href="#"><span>Phân loại</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
                         <ul>
                             @foreach (GetCategoryResponse category in categories)
                             {
-                                <li><a href="/khoa-hoc?category=@category.Href">@category.Name</a></li>
+                                <li><a href="/quan-ly-khoa-hoc?category=@category.Href">@category.Name</a></li>
                             }
                         </ul>
                     </li>
@@ -211,8 +211,8 @@
                 <div class="container">
                     <div class="row d-flex justify-content-center text-center">
                         <div class="col-lg-8">
-                            <h1>Khóa học</h1>
-                            <p class="mb-0">Danh sách các khóa học hiện có</p>
+                            <h1>Quản lý khóa học</h1>
+                            <p class="mb-0">Danh sách các khóa học sở hữu</p>
                         </div>
                     </div>
                 </div>
@@ -221,7 +221,7 @@
                 <div class="container">
                     <ol>
                         <li><a href="/">Trang chủ</a></li>
-                        <li class="current">Khóa học</li>
+                        <li class="current">Quản lý khóa học</li>
                     </ol>
                 </div>
             </nav>
@@ -230,8 +230,8 @@
             <div class="container justify-content-center d-flex">
                 <div class="col-lg-4">
                     <div class="searchBox">
-                        <input class="searchInput" type="text" name="" id="searchInput" placeholder="Tìm kiếm khóa học">
-                        <button class="searchButton" id="searchButton" href="#">
+                        <input class="searchInput" type="text" name="searchKey" id="searchInput" placeholder="Tìm kiếm khóa học">
+                        <button class="searchButton" type="button" id="searchButton">
                             <svg xmlns="http://www.w3.org/2000/svg" width="29" height="29" viewBox="0 0 29 29" fill="none">
                                 <g clip-path="url(#clip0_2_17)">
                                     <g filter="url(#filter0_d_2_17)">
@@ -265,7 +265,6 @@
         </div>
         <!-- Courses Section -->
         <section id="courses" class="courses section">
-
             <div class="container">
                 <div class="row">
                     @foreach (GetAllCourseResponse course in courses)
@@ -300,7 +299,7 @@
                 <ul>
                     @for (int pageNum = 1; pageNum <= totalPage; pageNum++)
                     {
-                        <a href="/khoa-hoc@(query != null ? query : "")&pageNum=@pageNum" class="@(pageNo == pageNum ? "is-active" : "")">
+                        <a href="/quan-ly-khoa-hoc@(query != null ? query : "")&pageNum=@pageNum" class="@(pageNo == pageNum ? "is-active" : "")">
                         <li>@pageNum</li></a>
                     }
                 </ul>
@@ -398,10 +397,11 @@
     <script>
         document.getElementById("searchButton").addEventListener('click', () => {
             const searchInput = document.getElementById("searchInput").value;
-            let url = "/khoa-hoc?searchKey=" + encodeURIComponent(searchInput) + "&@(categoryQuery != null ? $"category={categoryQuery}" : "")";
+            let url = "/quan-ly-khoa-hoc?searchKey=" + encodeURIComponent(searchInput) + "&@(categoryQuery != null ? $"category={categoryQuery}" : "")";
             window.location.href = url;
         })
     </script>
+
 </body>
 
 </html>

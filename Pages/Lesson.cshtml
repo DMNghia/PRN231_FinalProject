@@ -448,10 +448,10 @@
 					<i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
 				</nav>
 
-				<a class="btn-getstarted" href="@(principle != null ? "/" : "dang-nhap")">@(principle?.FullName != null ? principle.FullName : "Đăng nhập")</a>
+				<a class="btn-getstarted" href="@(principle != null ? "/" : "/dang-nhap")">@(principle?.FullName != null ? principle.FullName : "Đăng nhập")</a>
 				@if (principle != null)
 				{
-					<a class="btn-getstarted" href="dang-nhap">Đăng xuất</a>
+					<a class="btn-getstarted" href="/dang-nhap">Đăng xuất</a>
 				}
 
 			</div>

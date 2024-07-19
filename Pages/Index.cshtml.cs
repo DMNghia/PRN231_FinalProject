@@ -1,3 +1,4 @@
+using FinalProject.Constants;
 using FinalProject.Dto;
 using FinalProject.Dto.Response;
 using FinalProject.Services;
@@ -40,8 +41,10 @@ namespace FinalProject.Pages
             UserLoginPrinciple? principle = AuthService.GetPrinciple(HttpContext);
             if (principle != null)
             {
-                //response = await client.SendAsync(new HttpRequestMessage(HttpMethod.Get, "https://localhost:5000/api/User/enrolledCourses"));
-                //ViewData["enrolledCourses"] = (await response.Content.ReadFromJsonAsync<BaseResponse<List<GetAllCourseResponse>>>()).data;
+                requestMessage = new HttpRequestMessage(HttpMethod.Get, "https://localhost:5000/api/Course/enrolleds");
+                requestMessage.Headers.Add("Authorization", $"Barear {HttpContext.Request.Cookies["jwt_token"]}");
+                response = await client.SendAsync(requestMessage);
+                ViewData["enrolledCourses"] = (await response.Content.ReadFromJsonAsync<BaseResponse<List<GetAllCourseResponse>>>()).data;
             }
         }
 
@@ -66,14 +69,16 @@ namespace FinalProject.Pages
                     string? jwtToken = HttpContext.Request.Cookies["jwt_token"];
                     request.Headers.Add("Authorization", $"Bearer {jwtToken}");
                     var response = await _httpClient.SendAsync(request);
-                    if (response.IsSuccessStatusCode)
+                    BaseResponse<object> responseData = await response.Content.ReadFromJsonAsync<BaseResponse<object>>();
+                    if (responseData.code != ResponseCode.ERROR.GetHashCode())
                     {
-                        TempData["SuccessMessage"] = "Add Category successfully.";
+                        TempData["SuccessMessage"] = responseData.message;
                         return RedirectToPage();
                     }
                     else
                     {
-                        ModelState.AddModelError(string.Empty, "An error occurred while adding the category.");
+                        TempData["ErrorMessage"] = responseData.message;
+                        return RedirectToPage();
                     }
                 }
                 return Page();

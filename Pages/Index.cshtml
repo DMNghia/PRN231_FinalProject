@@ -11,6 +11,8 @@
     List<GetAllCourseResponse> popularCourses = ViewData["popularCourses"] as List<GetAllCourseResponse>;
     List<GetAllCourseResponse> enrolledCourses = ViewData["enrolledCourses"] as List<GetAllCourseResponse>;
     string? token = HttpContext.Request.Cookies["jwt_token"];
+    string? successMessage = TempData["SuccessMessage"] as string;
+    string? errorMessage = TempData["ErrorMessage"] as string;
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -40,6 +42,7 @@
 
     <!-- Main CSS File -->
     <link href="assets/css/main.css" rel="stylesheet">
+    <link href="~/assets/css/notification.css" rel="stylesheet"/>
 
     <!-- =======================================================
     * Template Name: Mentor
@@ -161,7 +164,7 @@
                 <span class="label-char" style="--index: 0">T</span>
                 <span class="label-char" style="--index: 1">ê</span>
                 <span class="label-char" style="--index: 2">n</span>
-                
+
             </label>
         </div>
 
@@ -178,7 +181,7 @@
                 <span class="label-char" style="--index: 1">r</span>
                 <span class="label-char" style="--index: 2">e</span>
                 <span class="label-char" style="--index: 3">f</span>
-                
+
             </label>
         </div>
 
@@ -189,6 +192,7 @@
     </form>
 </div>
 <body class="index-page">
+    <div id="notification-area"></div>
     <div id="blur">
         <header id="header" class="header d-flex align-items-center sticky-top">
             <div class="container-fluid container-xl position-relative d-flex align-items-center">
@@ -203,7 +207,10 @@
                     <ul>
                         <li><a href="/" class="active">Trang chủ<br></a></li>
                         <li><a href="/khoa-hoc">Khóa học</a></li>
-                        <li><a href="trainers.html">Giáo viên</a></li>
+                        @if (principle.Role.Equals(RoleName.TEACHER.ToString()))
+                        {
+                            <li><a href="/quan-ly-khoa-hoc">Quản lý khóa học</a></li>
+                        }
                         <li class="dropdown">
                             <a href="#"><span>Phân loại</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
                             <ul>
@@ -217,7 +224,7 @@
                                 {
                                     <li><a href="/khoa-hoc?category=@category.Href">@category.Name</a></li>
                                 }
-                                
+
                             </ul>
 
                         </li>
@@ -228,15 +235,15 @@
                     <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
                 </nav>
 
-                <a class="btn-getstarted" href="@(principle != null ? "/" : "dang-nhap")">@(principle?.FullName != null ? principle.FullName : "Đăng nhập")</a>
+                <a class="btn-getstarted" href="@(principle != null ? "/" : "/dang-nhap")">@(principle?.FullName != null ? principle.FullName : "Đăng nhập")</a>
                 @if (principle != null)
                 {
-                    <a class="btn-getstarted" href="dang-nhap">Đăng xuất</a>
+                    <a class="btn-getstarted" href="/dang-nhap">Đăng xuất</a>
                 }
 
             </div>
         </header>
-        
+
         <main class="main">
 
             <!-- Hero Section -->
@@ -339,7 +346,7 @@
                                                 <p class="category">@category.Name</p>
                                             }
                                         </div>
-                                        <h3><a href="@(principle != null ? "/khoa-hoc/@course.Href" : "/dang-nhap")">@course.Name</a></h3>
+                                        <h3><a href="@(principle != null ? $"/khoa-hoc/{course.Href}" : "/dang-nhap")">@course.Name</a></h3>
                                         <p class="description">@course.Description</p>
                                         <div class="trainer d-flex justify-content-between align-items-center">
                                             <div class="trainer-profile d-flex align-items-center">
@@ -353,49 +360,45 @@
                     </div>
                 </div>
             </section><!-- /Courses Section -->
-            @*@if (principle != null)
+            @if (principle != null)
             {
-            <section id="courses" class="courses section">
+                <section id="courses" class="courses section">
+                    <!-- Section Title -->
+                    <div class="container section-title" data-aos="fade-up">
+                        <h2>Khóa học</h2>
+                        <p>Các khóa học đã tham gia</p>
+                    </div><!-- End Section Title -->
+                    <div class="container">
+                        <div class="row">
+                            @foreach (GetAllCourseResponse course in enrolledCourses)
+                            {
+                                <div class="col-lg-4 col-md-6 d-flex align-items-stretch" data-aos="zoom-in" data-aos-delay="100">
+                                    <div class="course-item">
+                                        <img src="@course.Image" class="img-fluid m-lg-auto" alt="...">
+                                        <div class="course-content">
+                                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                                @foreach (CategoryDto category in course.Categories)
+                                                {
+                                                    <p class="category">@category.Name</p>
+                                                }
+                                            </div>
+                                            <h3><a href="@course.Href">@course.Name</a></h3>
+                                            <p class="description">@course.Description</p>
+                                            <div class="trainer d-flex justify-content-between align-items-center">
+                                                <div class="trainer-profile d-flex align-items-center">
+                                                    <a href="" class="trainer-link">@course.Teacher.FullName</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div> <!-- End Course Item-->
+                            }
+                        </div>
+                    </div>
+                </section>
 
-            <!-- Section Title -->
-            <div class="container section-title" data-aos="fade-up">
-            <h2>Khóa học</h2>
-            <p>Các khóa học đã tham gia</p>
-            </div><!-- End Section Title -->
-
-            <div class="container">
-
-            <div class="row">
-
-            @foreach (GetAllCourseResponse course in enrolledCourses)
-            {
-            <div class="col-lg-4 col-md-6 d-flex align-items-stretch" data-aos="zoom-in" data-aos-delay="100">
-            <div class="course-item">
-            <img src="@course.Image" class="img-fluid m-lg-auto" alt="...">
-            <div class="course-content">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-            @foreach (CategoryDto category in course.Categories)
-            {
-            <p class="category">@category.Name</p>
+                <!-- /Courses Section -->
             }
-            </div>
-            <h3><a href="/khoa-hoc/@course.Href">@course.Name</a></h3>
-            <p class="description">@course.Description</p>
-            <div class="trainer d-flex justify-content-between align-items-center">
-            <div class="trainer-profile d-flex align-items-center">
-            <a href="" class="trainer-link">@course.Teacher.FullName</a>
-            </div>
-            </div>
-            </div>
-            </div>
-            </div> <!-- End Course Item-->
-            }
-            </div>
-            </div>
-            </section>
-
-            <!-- /Courses Section -->
-            }*@
         </main>
 
         <footer id="footer" class="footer position-relative">
@@ -469,7 +472,7 @@
 
         </footer>
     </div>
-    
+
 
     <!-- Scroll Top -->
     <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
@@ -488,6 +491,7 @@
     <!-- Main JS File -->
     <script src="/assets/js/main.js"></script>
     <script src="/assets/js/utils.js"></script>
+    <script src="~/assets/js/notification.js"></script>
     <script>
         function toggleAddCategory() {
             var blur = document.getElementById('blur');
@@ -496,7 +500,22 @@
             popup.classList.toggle('active');
         }
     </script>
-
+    @if (errorMessage != null)
+    {
+        <script>
+            window.onload = () => {
+                notify('danger', '@errorMessage');
+            };
+        </script>
+    }
+    @if (successMessage != null)
+    {
+        <script>
+            window.onload = () => {
+                notify('success', '@successMessage');
+            };
+        </script>
+    }
 </body>
 
 </html>

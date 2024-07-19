@@ -5,6 +5,7 @@
     width: 300px;
     display: none;
     flex-direction: column;
+    z-index: 1000;
 }
 
     #notification-area .notification {
