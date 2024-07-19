@@ -11,6 +11,8 @@
     UserLoginPrinciple? principle = AuthService.GetPrinciple(HttpContext);
     List<GetCategoryResponse> categories = ViewData["categories"] as List<GetCategoryResponse>;
     GetCourseDetailResponse? course = ViewData["course"] as GetCourseDetailResponse;
+    var moocs = ViewData["moocs"] as List<MoocDTO>;
+    var lesson = ViewData["lesson"] as LessonDTO;
     string? href = ViewData["href"] as string;
     bool isTeacherCreated = (bool) ViewData["isTeacherCreated"];
 }
@@ -40,7 +42,7 @@
     <link href="/assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
     <link href="/assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
     <link href="~/assets/css/select.css" rel="stylesheet" />
-
+    <link rel="stylesheet" href="/assets/css/notification.css">
     <!-- Main CSS File -->
     <link href="/assets/css/main.css" rel="stylesheet">
 
@@ -53,7 +55,7 @@
     ======================================================== -->
 
     <style>
-        #popup, #popup1, #popupAddCategory {
+        #popup, #popup1, #popupEdit, #popupAddCategory {
             position: fixed;
             top: 30%;
             left: 50%;
@@ -70,7 +72,7 @@
             border-radius: 10px;
         }
 
-            #popup.active, #popup1.active, #popupAddCategory.active {
+            #popup.active, #popup1.active, #popupEdit.active, #popupAddCategory.active {
                 top: 50%;
                 visibility: visible;
                 opacity: 1;
@@ -159,7 +161,7 @@
 </head>
 
 <div id="popupAddCategory">
-    <form method="post">
+    <form method="post" asp-page-handler="AddCategory">
         <div class="wave-group">
             <input type="text" class="input" id="detailName" name="Name" style="margin-top: 20px; width: 80%" required>
             <span class="bar"></span>
@@ -195,6 +197,124 @@
     </form>
 </div>
 <body class="course-details-page">
+    <div id="popup">
+        <form method="post" id="addLesson">
+            <input type="hidden" name="courseHref" value="@ViewData["hrefKhoaHoc"]" />
+            <div class="wave-group">
+                <input type="text" class="input" id="lessonName" name="LessonName"
+                       style="margin-top: 20px;width: 80%" required>
+                <span class="bar"></span>
+                <label class="label">
+                    <span class="label-char" style="--index: 0">L</span>
+                    <span class="label-char" style="--index: 1">e</span>
+                    <span class="label-char" style="--index: 2">s</span>
+                    <span class="label-char" style="--index: 3">s</span>
+                    <span class="label-char" style="--index: 4">o</span>
+                    <span class="label-char" style="--index: 5">n</span>
+                    <span class="label-char" style="--index: 6">N</span>
+                    <span class="label-char" style="--index: 7">a</span>
+                    <span class="label-char" style="--index: 8">m</span>
+                    <span class="label-char" style="--index: 8">e</span>
+                </label>
+            </div>
+            <div class="wave-group" style="margin-top: 20px;">
+                <label for="MoocId">Select Mooc:</label><br>
+                <select id="MoocId" name="MoocId" style="width: 80%;">
+                    @if (moocs != null)
+                    {
+                        @foreach (var mooc in moocs)
+                        {
+                            <option value="@mooc.Id">@mooc.Name</option>
+                        }
+                    }
+
+                </select>
+            </div>
+
+            <div class="wave-group" style="margin-top: 10px;">
+                <label class="label">
+                    <span class="label-char" style="--index: 0; padding-top:20px">Description</span>
+                </label><br>
+                <textarea rows="10" cols="25" name="LessonDescription" style="width: 80%;font-size: 16px;"
+                          placeholder="Add Description" required">
+
+            </textarea>
+
+            </div>
+            <div class="wave-group">
+                <input type="text" class="input" name="Href"
+                       style="margin-top: 20px;width: 80%" required>
+                <span class="bar"></span>
+                <label class="label">
+                    <span class="label-char" style="--index: 0">H</span>
+                    <span class="label-char" style="--index: 1">r</span>
+                    <span class="label-char" style="--index: 2">e</span>
+                    <span class="label-char" style="--index: 3">f</span>
+                </label>
+            </div>
+            <div class="wave-group">
+                <input type="text" class="input" name="VideoUrl"
+                       style="margin-top: 20px;width: 80%" required>
+                <span class="bar"></span>
+                <label class="label">
+                    <span class="label-char" style="--index: 0">Video URL</span>
+
+                </label>
+            </div>
+            <div class="wave-group">
+                <input type="text" class="input" name="VideoTranscript"
+                       style="margin-top: 20px;width: 80%" required>
+                <span class="bar"></span>
+                <label class="label">
+                    <span class="label-char" style="--index: 0">Video Transcript</span>
+
+                </label>
+            </div>
+            <div class="" style="margin-top: 20px;">
+
+                <button type="submit" name="SubmitAddLesson" value="SubmitAddLesson"
+                        style="padding: 10px;cursor: pointer;border-radius: 7px;border: 1px solid #5c636a;margin-right: 20px;">
+                    Đăng Bài học mới
+                </button>
+
+
+                <button type="button" onclick="toggle()"
+                        style="padding: 10px;cursor: pointer;border-radius: 7px;border: 1px solid #5c636a">
+                    Đóng
+                </button>
+            </div>
+            @if (!ModelState.IsValid)
+            {
+                <div class="alert alert-danger">
+                    @Html.ValidationSummary(false, "", new { @class = "text-danger" })
+                </div>
+            }
+        </form>
+    </div>
+    <div id="popup1">
+        <form method="post">
+            <input type="hidden" name="courseHref" value="@ViewData["hrefKhoaHoc"]" />
+            <div class="wave-group">
+                <input type="text" class="input" id="detailName" name="Name" style="margin-top: 20px; width: 80%" required>
+                <span class="bar"></span>
+                <label class="label">
+                    <span class="label-char" style="--index: 0">N</span>
+                    <span class="label-char" style="--index: 1">a</span>
+                    <span class="label-char" style="--index: 2">m</span>
+                    <span class="label-char" style="--index: 3">e</span>
+                </label>
+            </div>
+
+            <div class="wave-group" style="margin-top: 20px;">
+                <label>Mô Tả Mooc:</label><br>
+                <textarea rows="10" cols="25" name="Description" style="width: 80%; font-size: 16px;" placeholder="Paste here..." required></textarea>
+            </div>
+            <div style="margin-top: 20px;">
+                <button type="submit" name="SubmitAddMooc" value="SubmitAddMooc" style="padding: 10px; cursor: pointer; border-radius: 7px; border: 1px solid #5c636a; margin-right: 20px;">Tạo mooc</button>
+                <button type="button" onclick="toggle1()" style="padding: 10px; cursor: pointer; border-radius: 7px; border: 1px solid #5c636a;">Đóng</button>
+            </div>
+        </form>
+    </div>
     <div id="blur">
         <header id="header" class="header d-flex align-items-center sticky-top">
             <div class="container-fluid container-xl position-relative d-flex align-items-center">
@@ -238,6 +358,7 @@
                 }
 
             </div>
+            <div id="notification-area"></div>
         </header>
         <main class="main">
             <!-- Page Title -->
@@ -277,9 +398,39 @@
                                 <h5>Giáo viên</h5>
                                 <p><a href="#">@course.Teacher.FullName</a></p>
                             </div>
+
+                            @if (principle != null && principle.Role == RoleName.TEACHER.ToString() && isTeacherCreated == true)
+                            {
+                                <div class="course-info d-flex justify-content-between align-items-center">
+                                    <button class="btn btn-success pull-right justify-content-center btn-create-lesson"
+                                            type="button"
+                                            data-toggle="modal" data-target="#lessonModal" onclick="toggle1()" style="width:160px">
+                                        <span class="icon"> <i class="fas fa-pencil-alt"></i> </span> <span>Thêm Mooc</span>
+                                    </button>
+                                </div>
+
+
+                                <div class="course-info d-flex justify-content-between align-items-center">
+                                    <button class="btn btn-success pull-right justify-content-center btn-create-lesson"
+                                            type="button"
+                                            data-toggle="modal" data-target="#lessonModal" onclick="toggle()" style="width:160px">
+                                        <span class="icon"> <i class="fas fa-pencil-alt"></i> </span> <span>Thêm bài học</span>
+                                    </button>
+                                </div>
+
+                               @* <div class="course-info d-flex justify-content-between align-items-center">
+                                    <button class="btn btn-success pull-right justify-content-center btn-edit-lesson"
+                                            type="button"
+                                            data-toggle="modal" data-target="#lessonEditModal" onclick="toggleEdit()" style="width:160px">
+                                        <span class="icon"> <i class="fas fa-pencil-alt"></i> </span> <span>Chỉnh sửa bài học</span>
+                                    </button>
+                                </div>*@
+                            }
+
                             <div class="course-info d-flex justify-content-between align-items-center">
                                 <h5>Các mooc và bài học</h5>
                             </div>
+
                             @foreach (MoocDTO mooc in course.Moocs)
                             {
                                 <div class="custom-select w-100">
@@ -426,6 +577,88 @@
 
     </script>
 
+    <script>
+        function toggle1() {
+            var blur = document.getElementById('blur');
+            blur.classList.toggle('active');
+            var popup = document.getElementById('popup1');
+            popup.classList.toggle('active');
+        }
+
+        function alertDelete(id) {
+            document.getElementById("deleteId").value = id;
+        }
+
+        function toggleDelete() {
+            var blur = document.getElementById('blur');
+            blur.classList.toggle('active');
+            var deleteDiv = document.getElementById('deleteDiv');
+            deleteDiv.classList.toggle('active');
+        }
+
+        function toggle() {
+            var blur = document.getElementById('blur');
+            blur.classList.toggle('active');
+            var popup = document.getElementById('popup');
+            popup.classList.toggle('active');
+        }
+
+
+        function toggleAddCategory() {
+            var blur = document.getElementById('blur');
+            blur.classList.toggle('active');
+            var popup = document.getElementById('popupAddCategory');
+            popup.classList.toggle('active');
+        }
+
+
+        function toggleEdit() {
+            var blur = document.getElementById('blur');
+            blur.classList.toggle('active');
+            var popup = document.getElementById('popupEdit');
+            popup.classList.toggle('active');
+        }
+
+        function confirmDelete() {
+            if (confirm("Bạn có chắc muốn xóa bài học này không?")) {
+
+                var form = document.getElementById('editLesson');
+                var input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'SubmitDeleteLesson';
+                input.value = 'SubmitDeleteLesson';
+                form.appendChild(input);
+                form.submit();
+            }
+
+        }
+
+        function confirmDeleteMooc(moocId) {
+            if (confirm("Bạn có chắc muốn xóa mooc này không?")) {
+                var form = document.getElementById('deleteMooc-' + moocId);
+                return true;
+            }
+            return false;
+        }
+
+    </script>
+    <script src="/assets/js/notification.js"></script>
+    @if (errorMessage != null)
+    {
+        <script>
+            window.onload = () => {
+                notify('danger', '@errorMessage');
+            };
+        </script>
+    }
+    @if (successMessage != null)
+    {
+        <script>
+            window.onload = () => {
+                notify('success', '@successMessage');
+            };
+        </script>
+    }
 </body>
 
 </html>
