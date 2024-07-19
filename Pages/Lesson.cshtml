@@ -14,6 +14,8 @@
 	UserLoginPrinciple? principle = AuthService.GetPrinciple(HttpContext);
 	var errorMessage = TempData["ErrorMessage"] as string;
 	var successMessage = TempData["SuccessMessage"] as string;
+
+	bool isTeacherCreated = (bool)ViewData["isTeacherCreated"];
 	//bool isTeacher = false;
 	//UserLoginPrinciple? principle = HttpContext.Items["principle"] as UserLoginPrinciple;
 	//if (principle != null && principle.Role == RoleName.TEACHER.ToString())
@@ -200,7 +202,7 @@
 	</form>
 </div>
 <body class="course-details-page">
-
+	
 
 	<div id="popup">
 		<form method="post" id="addLesson">
@@ -455,7 +457,9 @@
 				}
 
 			</div>
+			<div id="notification-area"></div>
 		</header>
+		
 
 		<main class="main">
 
@@ -508,12 +512,12 @@
 						}
 						<div class="col-lg-4">
 
-							@if (principle != null && principle.Role == RoleName.TEACHER.ToString())
+							@if (principle != null && principle.Role == RoleName.TEACHER.ToString() && isTeacherCreated == true)
 							{
 								<div class="course-info d-flex justify-content-between align-items-center">
 									<button class="btn btn-success pull-right justify-content-center btn-create-lesson"
 											type="button"
-											data-toggle="modal" data-target="#lessonModal" onclick="toggle1()">
+											data-toggle="modal" data-target="#lessonModal" onclick="toggle1()" style="width:160px">
 										<span class="icon"> <i class="fas fa-pencil-alt"></i> </span> <span>Thêm Mooc</span>
 									</button>
 								</div>
@@ -522,7 +526,7 @@
 								<div class="course-info d-flex justify-content-between align-items-center">
 									<button class="btn btn-success pull-right justify-content-center btn-create-lesson"
 											type="button"
-											data-toggle="modal" data-target="#lessonModal" onclick="toggle()">
+											data-toggle="modal" data-target="#lessonModal" onclick="toggle()" style="width:160px">
 										<span class="icon"> <i class="fas fa-pencil-alt"></i> </span> <span>Thêm bài học</span>
 									</button>
 								</div>
@@ -530,7 +534,7 @@
 								<div class="course-info d-flex justify-content-between align-items-center">
 									<button class="btn btn-success pull-right justify-content-center btn-edit-lesson"
 											type="button"
-											data-toggle="modal" data-target="#lessonEditModal" onclick="toggleEdit()">
+											data-toggle="modal" data-target="#lessonEditModal" onclick="toggleEdit()" style="width:160px">
 										<span class="icon"> <i class="fas fa-pencil-alt"></i> </span> <span>Chỉnh sửa bài học</span>
 									</button>
 								</div>
@@ -577,7 +581,7 @@
 									{
 										<li class="nav-item">
 											<a class="nav-link" href="javascript:void(0)" onclick="showLessons(@mooc.Id)">@mooc.Name</a>
-											@if (principle != null && principle.Role == RoleName.TEACHER.ToString())
+											@if (principle != null && principle.Role == RoleName.TEACHER.ToString() && isTeacherCreated == true)
 											{
 												<form method="post" asp-page-handler="DeleteMooc" id="deleteMooc-@mooc.Id" style="display:inline;" onsubmit="return confirmDeleteMooc(@mooc.Id)">
 													<input type="hidden" name="MoocId" value="@mooc.Id" />

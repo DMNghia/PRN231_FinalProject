@@ -41,8 +41,16 @@ namespace FinalProject.Pages
 			HttpResponseMessage response3 = await _httpClient.SendAsync(requestMessage);
 			BaseResponse<List<GetCategoryResponse>> responseGetAllCategories = await response3.Content.ReadFromJsonAsync<BaseResponse<List<GetCategoryResponse>>>();
 
-            // Update course enrolled
-            requestMessage = new HttpRequestMessage(HttpMethod.Post, $"https://localhost:5000/api/Course/add-course-enroll?hrefCourse={hrefKhoaHoc}&hrefLesson={hrefBaiHoc}");
+			// Get course detail for isTeacherCreated
+			requestMessage = new HttpRequestMessage(HttpMethod.Get, $"https://localhost:5000/api/Course/detail/{hrefKhoaHoc}");
+			requestMessage.Headers.Add("Authorization", $"Barear {HttpContext.Request.Cookies["jwt_token"]}");
+			HttpResponseMessage responseMessage = await _httpClient.SendAsync(requestMessage);
+			BaseResponse<GetCourseDetailResponse> response4 = await responseMessage.Content.ReadFromJsonAsync<BaseResponse<GetCourseDetailResponse>>();
+			
+			ViewData["isTeacherCreated"] = response4.data.Teacher.Id == principle.Id;
+
+			// Update course enrolled
+			requestMessage = new HttpRequestMessage(HttpMethod.Post, $"https://localhost:5000/api/Course/add-course-enroll?hrefCourse={hrefKhoaHoc}&hrefLesson={hrefBaiHoc}");
             requestMessage.Headers.Add("Authorization", $"Barear {HttpContext.Request.Cookies["jwt_token"]}");
             await _httpClient.SendAsync(requestMessage);
 
@@ -64,6 +72,7 @@ namespace FinalProject.Pages
 
                 if (Request.Form.TryGetValue("SubmitAddMooc", out var submitMoocValue) && submitMoocValue == "SubmitAddMooc")
                 {
+                    moocDTO.Lessons = new List<LessonDTO>();
                     var contentBody = new StringContent(JsonSerializer.Serialize(moocDTO), null, "application/json");
                     var request = new HttpRequestMessage(HttpMethod.Post, $"https://localhost:5000/api/Mooc/AddMooc?courseHref={courseHref}");
                     request.Content = contentBody;
@@ -73,12 +82,13 @@ namespace FinalProject.Pages
                     if (response.IsSuccessStatusCode)
                     {
                         TempData["SuccessMessage"] = "Add mooc successfully.";
-                        return RedirectToPage(new { hrefKhoaHoc = courseHref });
+                        return RedirectToPage();
                     }
                     else
                     {
-                        ModelState.AddModelError(string.Empty, "An error occurred while adding the mooc.");
-                    }
+						TempData["ErrorMessage"] = "An error occur.";
+						return RedirectToPage();
+					}
                 }
                 else if (Request.Form.TryGetValue("SubmitAddLesson", out var submitLessonValue) && submitLessonValue == "SubmitAddLesson")
                 {

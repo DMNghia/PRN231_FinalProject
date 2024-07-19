@@ -28,10 +28,14 @@ namespace FinalProject.Models
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            var config = new ConfigurationBuilder()
+                    .AddJsonFile("appsettings.json").Build();
             if (!optionsBuilder.IsConfigured)
             {
-                var config = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
-                optionsBuilder.UseSqlServer(config.GetConnectionString("Value"));
+                optionsBuilder.UseSqlServer(
+                    config.GetConnectionString("value"));
+
+
             }
         }
 
@@ -84,12 +88,12 @@ namespace FinalProject.Models
                 entity.HasOne(d => d.Category)
                     .WithMany(p => p.CourseCategories)
                     .HasForeignKey(d => d.CategoryId)
-                    .HasConstraintName("FK__Course_Ca__Categ__44FF419A");
+                    .HasConstraintName("FK__Course_Ca__Categ__31EC6D26");
 
                 entity.HasOne(d => d.Course)
                     .WithMany(p => p.CourseCategories)
                     .HasForeignKey(d => d.CourseId)
-                    .HasConstraintName("FK__Course_Ca__Cours__440B1D61");
+                    .HasConstraintName("FK__Course_Ca__Cours__30F848ED");
             });
 
             modelBuilder.Entity<CourseEnrolled>(entity =>
@@ -109,12 +113,12 @@ namespace FinalProject.Models
                 entity.HasOne(d => d.Course)
                     .WithMany(p => p.CourseEnrolleds)
                     .HasForeignKey(d => d.CourseId)
-                    .HasConstraintName("FK__Course_En__Cours__4E88ABD4");
+                    .HasConstraintName("FK__Course_En__Cours__3B75D760");
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.CourseEnrolleds)
                     .HasForeignKey(d => d.UserId)
-                    .HasConstraintName("FK__Course_En__UserI__4D94879B");
+                    .HasConstraintName("FK__Course_En__UserI__3A81B327");
             });
 
             modelBuilder.Entity<Lesson>(entity =>
@@ -142,7 +146,7 @@ namespace FinalProject.Models
                 entity.HasOne(d => d.Mooc)
                     .WithMany(p => p.Lessons)
                     .HasForeignKey(d => d.MoocId)
-                    .HasConstraintName("FK__Lesson__MoocID__4AB81AF0");
+                    .HasConstraintName("FK__Lesson__MoocID__37A5467C");
             });
 
             modelBuilder.Entity<Mooc>(entity =>
@@ -160,7 +164,7 @@ namespace FinalProject.Models
                 entity.HasOne(d => d.Course)
                     .WithMany(p => p.Moocs)
                     .HasForeignKey(d => d.CourseId)
-                    .HasConstraintName("FK__Mooc__CourseID__47DBAE45");
+                    .HasConstraintName("FK__Mooc__CourseID__34C8D9D1");
             });
 
             modelBuilder.Entity<Token>(entity =>
@@ -186,7 +190,7 @@ namespace FinalProject.Models
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.Tokens)
                     .HasForeignKey(d => d.UserId)
-                    .HasConstraintName("FK__Token__UserID__398D8EEE");
+                    .HasConstraintName("FK__Token__UserID__267ABA7A");
             });
 
             modelBuilder.Entity<User>(entity =>
@@ -226,19 +230,17 @@ namespace FinalProject.Models
 
                 entity.Property(e => e.CourseId).HasColumnName("CourseID");
 
-                entity.Property(e => e.UpdateAt).HasColumnType("datetime");
-
                 entity.Property(e => e.UserId).HasColumnName("UserID");
 
                 entity.HasOne(d => d.Course)
                     .WithMany(p => p.UserCourses)
                     .HasForeignKey(d => d.CourseId)
-                    .HasConstraintName("FK__User_Cour__Cours__3F466844");
+                    .HasConstraintName("FK__User_Cour__Cours__2C3393D0");
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.UserCourses)
                     .HasForeignKey(d => d.UserId)
-                    .HasConstraintName("FK__User_Cour__UserI__3E52440B");
+                    .HasConstraintName("FK__User_Cour__UserI__2B3F6F97");
             });
 
             OnModelCreatingPartial(modelBuilder);
