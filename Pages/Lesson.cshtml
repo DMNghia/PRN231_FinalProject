@@ -425,7 +425,10 @@
 					<ul>
 						<li><a href="/" class="active">Trang chủ<br></a></li>
 						<li><a href="/khoa-hoc">Khóa học</a></li>
-						<li><a href="trainers.html">Giáo viên</a></li>
+						@if (principle != null && principle.Role.Equals(RoleName.TEACHER.ToString()))
+						{
+							<li><a href="/quan-ly-khoa-hoc">Quản lý khóa học</a></li>
+						}
 						<li class="dropdown">
 							<a href="#"><span>Phân loại</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
 							<ul>

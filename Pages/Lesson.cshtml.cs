@@ -205,7 +205,7 @@ namespace FinalProject.Pages
                     var response = await _httpClient.SendAsync(request);
                     if (response.IsSuccessStatusCode)
                     {
-                        return RedirectToPage("/Course-Detail");
+                        return Redirect($"/khoa-hoc/{courseHref}");
                     }
                     else
                     {
